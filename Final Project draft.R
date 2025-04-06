@@ -7,7 +7,8 @@ library(httr)
 library(jsonlite)
 library(lubridate)
 
-setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
+# setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
+setwd("C:/Users/salda/OneDrive/Documents/money team")
 FRED_key <- readLines("FRED_key.txt")
 get_fred<- function(id){
   base_url <- "https://api.stlouisfed.org/fred/series/observations?series_id="
