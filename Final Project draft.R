@@ -6,20 +6,42 @@ library(ggthemes)
 library(httr)
 library(jsonlite)
 library(lubridate)
+library(purrr)
+library(PortfolioAnalytics)
+library(quantmod)
+library(PerformanceAnalytics)
+library("httr")
+library("jsonlite")
 
-# setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
-setwd("C:/Users/salda/OneDrive/Documents/money team")
+
+setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
 FRED_key <- readLines("FRED_key.txt")
-get_fred<- function(id){
+get_fred <- function(id){
   base_url <- "https://api.stlouisfed.org/fred/series/observations?series_id="
-  res <- GET(paste0(base_url,id,"&api_key=",FRED_key,"&file_type=json"))
+  url <- paste0(base_url, id, "&api_key=", FRED_key, "&file_type=json")
+  
+  res <- GET(url)
+  
+  if (res$status_code != 200) {
+    warning(paste("Request failed for series:", id))
+    return(NULL)
+  }
+  
   res_content <- content(res, as = "text", encoding = "UTF-8")
   json <- fromJSON(res_content)
-  data <-json$observations
-  data <- data |> mutate(value = as.numeric(value),# immediately convert to usable format
-                          date = as.Date(date))
+  
+  if (length(json$observations) == 0) {
+    warning(paste("No data found for series:", id))
+    return(NULL)
+  }
+  
+  data <- json$observations |> 
+    mutate(value = as.numeric(value),
+           date = as.Date(date))
+  
   return(data)
 }
+
 AV_key <- readLines("Alphavantage_key.txt")
 
 GET_AV <- function(ticker){
@@ -73,7 +95,7 @@ iwm_data <- iwm_data |>
   arrange(date) |> 
   mutate(log_return = log(close / lag(close)))
 
-
+# plot  of log returns of SPY
 ggplot(spy_data, aes(x = date, y = log_return)) +
   geom_line(color = "steelblue") +
   labs(title = "Monthly Log Returns of SPY (S&P 500 ETF)",
@@ -107,7 +129,339 @@ cat("Annualized Return:", round(iwm_annual_return * 100, 2), "%\n")
 cat("Annualized Volatility:", round(iwm_annual_volatility * 100, 2), "%\n")
 
 
+#get Bond historical data
+aaa_yield <- get_fred("BAMLCC0A1AAATRIV")|>   #ICE BofA AAA US Corporate Index Effective Yield
+  select(date , AAA = value)
+gov10y_yield <- get_fred("GS10")|>
+  select(date , Gov10Y = value)
+gov30y_yield <- get_fred("GS30")|>
+  select(date , Gov30Y = value)
+gov3m_yield <- get_fred("DTB3")|>
+  select(date , Gov3m = value)
+
+#combining the data
+combined_bond <- reduce(list(
+  aaa_yield ,
+  gov10y_yield ,
+  gov30y_yield ,
+  gov3m_yield 
+  
+), full_join, by = "date") |> 
+  drop_na()
+
+
+#graph for gov bonds
+combined_bond |> select(-AAA)|>
+  pivot_longer(-date, names_to = "Rating", values_to = "Yield") |>
+  ggplot(aes(x = date, y = Yield, color = Rating)) +
+  geom_line() +
+  labs(title = "Bond Yields by Rating", y = "Yield (%)")
+
+# graph for corporate AAA bonds
+combined_bond |> select(AAA,date)|>
+  pivot_longer(-date, names_to = "Rating", values_to = "Yield") |>
+  ggplot(aes(x = date, y = Yield, color = Rating)) +
+  geom_line() +
+  labs(title = "Bond Yields by Rating", y = "Yield (%)")
+
+# bonds returns by calculating changes in yields
+bond_returns <- combined_bond |>
+  arrange(date) |>
+  filter(Gov3m > 0) |>  # filter out zero yields
+  mutate(
+    AAA_return = log(AAA / lag(AAA)),
+    Gov10Y_return = log(Gov10Y / lag(Gov10Y)),
+    Gov30Y_return = log(Gov30Y / lag(Gov30Y)),
+    Gov3m_return = log(Gov3m / lag(Gov3m))
+  ) |>
+  drop_na()
+
+# Historical volatility (standard deviation of returns)
+volatilities_bonds <- bond_returns |>
+  summarize(
+    AAA_vol = sd(AAA_return),
+    Gov10Y_vol = sd(Gov10Y_return),
+    Gov30Y_vol = sd(Gov30Y_return),
+    Gov3m_vol = sd(Gov3m_return)
+  )
+
+# check starts and end dates
+spy_data |> summarize(start = min(date), end = max(date))
+mdy_data |> summarize(start = min(date), end = max(date))
+iwm_data |> summarize(start = min(date), end = max(date))
+bond_returns |> summarize(start = min(date), end = max(date))
+
+# Create a month column in both stock and bond datasets
+spy_data <- spy_data |> mutate(month = floor_date(date, "month"))
+mdy_data <- mdy_data |> mutate(month = floor_date(date, "month"))
+iwm_data <- iwm_data |> mutate(month = floor_date(date, "month"))
+bond_returns <- bond_returns |> mutate(month = floor_date(date, "month"))
+
+# Now merge them on the 'month' column
+returns_data <- reduce(list(spy_data, mdy_data, iwm_data, bond_returns), 
+                       full_join, by = "month") |> 
+  drop_na()
+
+# Check the date range of the merged data
+cat("Merged date range: ", range(returns_data$month), "\n")
 
 
 
+# Calculate average monthly returns
+returns_data <- returns_data |> 
+  mutate(
+    spy_avg_monthly_return = mean(spy_data$log_return, na.rm = TRUE),
+    mdy_avg_monthly_return = mean(mdy_data$log_return, na.rm = TRUE),
+    iwm_avg_monthly_return = mean(iwm_data$log_return, na.rm = TRUE),
+    aaa_avg_monthly_return = mean(bond_returns$AAA_return, na.rm = TRUE),
+    gov10y_avg_monthly_return = mean(bond_returns$Gov10Y_return, na.rm = TRUE),
+    gov30y_avg_monthly_return = mean(bond_returns$Gov30Y_return, na.rm = TRUE),
+    gov3m_avg_monthly_return = mean(bond_returns$Gov3m_return, na.rm = TRUE)
+  )
+
+# Calculate monthly volatility (standard deviation of returns)
+returns_data <- returns_data |> 
+  mutate(
+    spy_vol_monthly = sd(spy_data$log_return, na.rm = TRUE),
+    mdy_vol_monthly = sd(mdy_data$log_return, na.rm = TRUE),
+    iwm_vol_monthly = sd(iwm_data$log_return, na.rm = TRUE),
+    aaa_vol_monthly = sd(bond_returns$AAA_return, na.rm = TRUE),
+    gov10y_vol_monthly = sd(bond_returns$Gov10Y_return, na.rm = TRUE),
+    gov30y_vol_monthly = sd(bond_returns$Gov30Y_return, na.rm = TRUE),
+    gov3m_vol_monthly = sd(bond_returns$Gov3m_return, na.rm = TRUE)
+  )
+
+# Calculate annualized returns and volatility
+returns_data <- returns_data |> 
+  mutate(
+    # Annualized Returns (Multiply monthly return by 12)
+    spy_annualized_return = spy_avg_monthly_return * 12,
+    mdy_annualized_return = mdy_avg_monthly_return * 12,
+    iwm_annualized_return = iwm_avg_monthly_return * 12,
+    aaa_annualized_return = aaa_avg_monthly_return * 12,
+    gov10y_annualized_return = gov10y_avg_monthly_return * 12,
+    gov30y_annualized_return = gov30y_avg_monthly_return * 12,
+    gov3m_annualized_return = gov3m_avg_monthly_return * 12,
+    
+    # Annualized Volatility (Multiply monthly volatility by sqrt(12))
+    spy_annualized_volatility = spy_vol_monthly * sqrt(12),
+    mdy_annualized_volatility = mdy_vol_monthly * sqrt(12),
+    iwm_annualized_volatility = iwm_vol_monthly * sqrt(12),
+    aaa_annualized_volatility = aaa_vol_monthly * sqrt(12),
+    gov10y_annualized_volatility = gov10y_vol_monthly * sqrt(12),
+    gov30y_annualized_volatility = gov30y_vol_monthly * sqrt(12),
+    gov3m_annualized_volatility = gov3m_vol_monthly * sqrt(12)
+  )
+
+# Check results
+returns_data |> select(contains("annualized")) |> head()
+
+
+
+
+
+
+#get inflation data
+cpi_data <- get_fred("CPIAUCSL")|>
+  select(date , CPI = value)
+# get wage data
+wage_data <- get_fred("CES0500000003")|>
+  select(date , WAGE = value)
+
+
+ggplot(cpi_data, aes(x = date, y = CPI)) +
+  geom_line(color = "steelblue") +
+  labs(title = "Consumer Price Index (CPI)",
+       x = "Date", y = "Index Value")
+
+ggplot(wage_data, aes(x = date, y = WAGE)) +
+  geom_line(color = "darkgreen") +
+  labs(title = "Average Hourly Earnings (Total Private)",
+       x = "Date", y = "Earnings (USD)")
+
+
+rebased_data <- bind_rows(
+  spy_data |> select(date, close) |> mutate(asset = "SPY"),
+  mdy_data |> select(date, close) |> mutate(asset = "MDY"),
+  iwm_data |> select(date, close) |> mutate(asset = "IWM")
+) |> 
+  group_by(asset) |> 
+  arrange(date) |> 
+  mutate(rebased = close / first(close) * 100)
+
+ggplot(rebased_data, aes(x = date, y = rebased, color = asset)) +
+  geom_line() +
+  labs(title = "Rebased Asset Prices (Starting at 100)", y = "Index (100 = Start)")
+
+
+
+# Define the user's age
+user_age <- 30  # Example: 30 years old
+
+# Define strategy based on age
+strategy <- if (user_age < 35) "Aggressive" else if (user_age < 55) "Balanced" else "Conservative"
+
+# Define asset allocation by strategy
+strategy_alloc <- switch(strategy,
+                         "Aggressive" = c(Stocks = 0.8, Bonds = 0.15, Alternatives = 0.05),
+                         "Balanced" = c(Stocks = 0.6, Bonds = 0.35, Alternatives = 0.05),
+                         "Conservative" = c(Stocks = 0.4, Bonds = 0.55, Alternatives = 0.05)
+)
+
+cat("Portfolio Strategy: ", strategy, "\n")
+cat("Asset Allocation: ", strategy_alloc, "\n")
+
+# Define the assets mapped to stocks and bonds
+stock_assets <- c("SPY", "MDY", "IWM")
+bond_assets <- c("AAA", "Gov10Y", "Gov30Y", "Gov3m")
+
+# Extract the weights for the stock and bond assets
+stock_weight <- strategy_alloc["Stocks"]
+bond_weight <- strategy_alloc["Bonds"]
+
+# Determine how to distribute the stock weight across the three ETFs
+stock_etf_weight <- stock_weight / length(stock_assets)
+
+# Print out the allocated weights for each asset class
+cat("Stock Weights: \n")
+stock_assets |> purrr::walk(~ cat(.x, ":", round(stock_etf_weight * 100, 2), "%\n"))
+
+cat("\nBond Weights: \n")
+bond_assets |> purrr::walk(~ cat(.x, ":", round(bond_weight / length(bond_assets) * 100, 2), "%\n"))
+
+# Set the number of simulations and years for the forecast
+num_simulations <- 500
+years <- 20
+num_months <- years * 12
+
+# Function to perform the Monte Carlo simulation
+monte_carlo_simulation <- function(weights, asset_returns, num_simulations, num_months) {
+  simulation_results <- matrix(NA, nrow = num_months, ncol = num_simulations)
+  
+  for (i in 1:num_simulations) {
+    # Randomly sample returns for each asset from historical returns
+    sampled_returns <- sample(asset_returns, num_months, replace = TRUE)
+    
+    # Portfolio return for this simulation (weighted returns)
+    portfolio_returns <- sum(weights * sampled_returns)
+    
+    # Calculate the portfolio value over time (compounded)
+    portfolio_value <- cumprod(1 + portfolio_returns)
+    
+    # Replace any NA values with 0 (or another appropriate value like 1)
+    portfolio_value[is.na(portfolio_value)] <- 0  # Replace NA with 0
+    simulation_results[, i] <- portfolio_value
+  }
+  
+  return(simulation_results)
+}
+
+# Run Monte Carlo simulations for the portfolio
+simulation_results <- monte_carlo_simulation(weights = c(rep(stock_etf_weight, 3), rep(bond_weight / 4, 4)),
+                                             asset_returns = asset_returns,
+                                             num_simulations = num_simulations,
+                                             num_months = num_months)
+
+# Convert the simulation results to a data frame for ggplot
+simulation_results_df <- as.data.frame(simulation_results)
+simulation_results_df$date <- seq.Date(from = Sys.Date(), by = "month", length.out = num_months)
+
+# Plot the simulation paths (use the correct column reference style)
+
+simulation_results_long <- simulation_results_df %>%
+  gather(key = "simulation", value = "portfolio_value", -date)
+
+# Plot using ggplot (tidy data format)
+ggplot(simulation_results_long, aes(x = date, y = portfolio_value, group = simulation)) +
+  geom_line(alpha = 0.1, color = "blue") +
+  labs(title = "Monte Carlo Simulation of Portfolio Value",
+       y = "Portfolio Value", x = "Date")
+
+
+
+# Load quantmod package
+library(quantmod)
+
+# Get Bitcoin data from Yahoo Finance (BTC-USD)
+getSymbols("BTC-USD", src = "yahoo", from = "2010-01-01", to = Sys.Date())
+
+# Extract adjusted closing prices
+`BTC-USD` <- `BTC-USD`|>arrange(date) |> 
+  mutate(log_return = log(Close / lag(Close)))
+
+# Calculate log returns for Bitcoin
+btc_returns <- diff(log(btc_data)) * 100  # Annualized log returns (in percentage)
+
+# Plot Bitcoin Log Returns
+plot(btc_returns, main = "Bitcoin Log Returns (BTC-USD)", col = "orange", type = "l")
+
+
+
+
+
+
+# Plot Bitcoin Log Returns
+ggplot(btc_data, aes(x = date, y = log_return)) +
+  geom_line(color = "orange") +
+  labs(title = "Monthly Log Returns of Bitcoin",
+       x = "Date", y = "Log Return")
+
+#  REIT data (VNQ) from Alpha Vantage
+reit_data <- GET_AV("VNQ")
+
+# Calculating log returns for REIT
+reit_data <- reit_data |> 
+  arrange(date) |> 
+  mutate(log_return = log(close / lag(close)))
+
+# Plot REIT Log Returns
+ggplot(reit_data, aes(x = date, y = log_return)) +
+  geom_line(color = "purple") +
+  labs(title = "Monthly Log Returns of REIT (VNQ)",
+       x = "Date", y = "Log Return")
+
+
+
+
+
+
+
+# Prepare the returns matrix as you already have it
+returns_matrix <- returns_data |>
+  select(spy_annualized_return, mdy_annualized_return, iwm_annualized_return,
+         aaa_annualized_return, gov10y_annualized_return, gov30y_annualized_return, gov3m_annualized_return) |>
+  as.matrix()
+
+# Calculate the covariance matrix of the returns
+cov_matrix <- cov(returns_matrix)
+
+# Calculate the expected returns (mean returns)
+expected_returns <- colMeans(returns_matrix)
+
+# Define the number of assets in the portfolio
+num_assets <- length(expected_returns)
+
+# Define portfolio specification
+port_spec <- portfolio.spec(assets = colnames(returns_matrix))
+
+# Add objective functions to the portfolio specification
+port_spec <- add.objective(port_spec, type = "return", name = "mean")
+port_spec <- add.objective(port_spec, type = "risk", name = "StdDev")
+
+# Optimize the portfolio (Maximize return, minimize risk)
+opt_portfolio <- optimize.portfolio(returns_matrix, port_spec, optimize_method = "ROI", trace = TRUE)
+
+# Get the optimal weights
+optimal_weights <- opt_portfolio$weights
+
+# Calculate the expected portfolio return
+portfolio_return <- sum(optimal_weights * expected_returns)
+
+# Calculate the expected portfolio volatility (standard deviation)
+portfolio_volatility <- sqrt(t(optimal_weights) %*% cov_matrix %*% optimal_weights)
+
+# Print the results
+cat("Optimal portfolio weights:", optimal_weights, "\n")
+cat("Expected Portfolio Return:", portfolio_return, "\n")
+cat("Expected Portfolio Volatility:", portfolio_volatility, "\n")
 
