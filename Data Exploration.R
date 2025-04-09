@@ -158,3 +158,37 @@ returns_summary <- filtered_data |>
   )
 
 print(returns_summary)
+
+
+## Big Cap vs Mid-cap vs Small Cap
+#Retrieve and combine data for SPY, DEF, IJH, and IWN
+combined_data <- bind_rows(
+  GET_AV("SPY") |> 
+    arrange(date) |> 
+    mutate(ticker = "SPY"),
+  GET_AV("DEF") |> 
+    arrange(date) |> 
+    mutate(ticker = "DEF"),
+  GET_AV("IJH") |> 
+    arrange(date) |> 
+    mutate(ticker = "IJH"),
+  GET_AV("IWN") |> 
+    arrange(date) |> 
+    mutate(ticker = "IWN")
+)
+
+# Filter to include only data for the past 15 years
+filtered_data <- combined_data |> 
+  filter(date >= Sys.Date() - years(15))
+
+# Plot the adjusted close prices for SPY, DEF, IJH, and IWN
+filtered_data |> 
+  ggplot(aes(x = date, y = adjusted_close, color = ticker)) +
+  geom_line() +
+  labs(
+    title = "Comparison of SPY, DEF, IJH, and IWN",
+    x = "Date",
+    y = "Adjusted Close Price",
+    color = "Ticker"
+  ) +
+  theme_minimal()
