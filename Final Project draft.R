@@ -1,3 +1,6 @@
+# install.packages("quantmod")
+# install.packages("PerformanceAnalytics")
+
 library(dplyr)
 library(ggplot2)
 library(tidyr)
@@ -6,100 +9,107 @@ library(ggthemes)
 library(httr)
 library(jsonlite)
 library(lubridate)
-library(purrr)
-library(PortfolioAnalytics)
-library(quantmod)
-library(PerformanceAnalytics)
-library("httr")
-library("jsonlite")
 
-
-setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
+# setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
+setwd("C:/Users/salda/OneDrive/Documents/money team")
 FRED_key <- readLines("FRED_key.txt")
-get_fred <- function(id){
+get_fred<- function(id){
   base_url <- "https://api.stlouisfed.org/fred/series/observations?series_id="
-  url <- paste0(base_url, id, "&api_key=", FRED_key, "&file_type=json")
-  
-  res <- GET(url)
-  
-  if (res$status_code != 200) {
-    warning(paste("Request failed for series:", id))
-    return(NULL)
-  }
-  
+  res <- GET(paste0(base_url,id,"&api_key=",FRED_key,"&file_type=json"))
   res_content <- content(res, as = "text", encoding = "UTF-8")
   json <- fromJSON(res_content)
-  
-  if (length(json$observations) == 0) {
-    warning(paste("No data found for series:", id))
-    return(NULL)
-  }
-  
-  data <- json$observations |> 
-    mutate(value = as.numeric(value),
-           date = as.Date(date))
-  
+  data <-json$observations
+  data <- data |> mutate(value = as.numeric(value),# immediately convert to usable format
+                         date = as.Date(date))
   return(data)
 }
 
+# Read your Alpha Vantage key
 AV_key <- readLines("Alphavantage_key.txt")
 
+# Function to get data from Alpha Vantage for a given ticker
 GET_AV <- function(ticker){
   
-  url <-paste0("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED","&symbol=",ticker,"&apikey=",AV_key)
-  res <- GET(url)
-  res_content<-(content(res,as = "text",encoding = "UTF-8"))
-  j <- fromJSON(res_content,flatten = TRUE)
-  data <- j$`Monthly Adjusted Time Series`
-  #### unpacking the data with a for loop
+  # Build the URL for the monthly adjusted time series
+  url <- paste0(
+    "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED",
+    "&symbol=", ticker,
+    "&apikey=", AV_key
+  )
   
-  close <- c() #empty list to contain the list
+  # Make the GET request and parse the JSON response
+  res <- GET(url)
+  res_content <- content(res, as = "text", encoding = "UTF-8")
+  j <- fromJSON(res_content, flatten = TRUE)
+  
+  # Extract the "Monthly Adjusted Time Series" data
+  data <- j$`Monthly Adjusted Time Series`
+  
+  # Create empty vectors to store our data
+  close <- c()
+  adjusted_close <- c()
   low <- c()
   volume <- c()
-  div <- c()
+  dividend <- c()
   
-  for(i in seq(1:length(data))){
-    close <- append(close,data[[i]][["4. close"]])
-    low <- append(low,data[[i]][["3. low"]])
-    volume <- append(volume,data[[i]][["6. volume"]])
-    div <-append(div,data[[i]][["7. dividend amount"]])
+  # Loop over each element in the data to unpack the values.
+  for(i in seq_along(data)){
+    close <- append(close, data[[i]][["4. close"]])
+    adjusted_close <- append(adjusted_close, data[[i]][["5. adjusted close"]])
+    low <- append(low, data[[i]][["3. low"]])
+    volume <- append(volume, data[[i]][["6. volume"]])
+    dividend <- append(dividend, data[[i]][["7. dividend amount"]])
   }
-  df <- data.frame(date = as.Date(names(data)),
-                   close = as.numeric(close),
-                   low = as.numeric(low),
-                   volume = as.numeric(volume),
-                   dividend = as.numeric(div))
+  
+  # Build the data frame
+  df <- data.frame(
+    date = as.Date(names(data)),
+    close = as.numeric(close),
+    adjusted_close = as.numeric(adjusted_close),
+    low = as.numeric(low),
+    volume = as.numeric(volume),
+    dividend = as.numeric(dividend)
+  )
+  
   return(df)
 }
 
-# get S&P 500 Data
+# Fetch the data for each ticker
 spy_data <- GET_AV("SPY")
-
-# For Mid-Cap (MDY) S&P MidCap 400 
 mdy_data <- GET_AV("MDY")
-
-# For Small-Cap (IWM) Russell 2000 
 iwm_data <- GET_AV("IWM")
 
+# (Optional) Check the names in the data frame to confirm the columns
+names(spy_data)  # Should include: "date", "close", "adjusted_close", "low", "volume", "dividend"
 
-# calculating log returns
-spy_data <- spy_data |> 
-  arrange(date) |> 
-  mutate(log_return = log(close / lag(close)))
+# Calculate log returns using the adjusted close
+spy_data <- spy_data %>%
+  arrange(date) %>%
+  mutate(log_return = log(adjusted_close / lag(adjusted_close)))
 
-mdy_data <- mdy_data |> 
-  arrange(date) |> 
-  mutate(log_return = log(close / lag(close)))
+mdy_data <- mdy_data %>%
+  arrange(date) %>%
+  mutate(log_return = log(adjusted_close / lag(adjusted_close)))
 
-iwm_data <- iwm_data |> 
-  arrange(date) |> 
-  mutate(log_return = log(close / lag(close)))
+iwm_data <- iwm_data %>%
+  arrange(date) %>%
+  mutate(log_return = log(adjusted_close / lag(adjusted_close)))
 
-# plot  of log returns of SPY
+# Plotting the log returns for SPY
+ggplot(spy_data, aes(x = date, y = log_return)) +
+  geom_line(color = "steelblue") +
+  labs(
+    title = "Monthly Log Returns of SPY (S&P 500 ETF)",
+    x = "Date",
+    y = "Log Return"
+  )
+
+# Plotting the log returns for SPY
 ggplot(spy_data, aes(x = date, y = log_return)) +
   geom_line(color = "steelblue") +
   labs(title = "Monthly Log Returns of SPY (S&P 500 ETF)",
        x = "Date", y = "Log Return")
+
 
 spy_avg_monthly_log_return <- mean(spy_data$log_return, na.rm = TRUE)
 spy_vol_monthly_log_return <- sd(spy_data$log_return, na.rm = TRUE)
@@ -127,7 +137,6 @@ iwm_annual_volatility <- iwm_vol_monthly_log_return * sqrt(12)
 
 cat("Annualized Return:", round(iwm_annual_return * 100, 2), "%\n")
 cat("Annualized Volatility:", round(iwm_annual_volatility * 100, 2), "%\n")
-
 
 #get Bond historical data
 aaa_yield <- get_fred("BAMLCC0A1AAATRIV")|>   #ICE BofA AAA US Corporate Index Effective Yield
