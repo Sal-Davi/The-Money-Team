@@ -120,7 +120,6 @@ combined_data <- bind_rows(
     mutate(ticker = "VXUS")
 )
 
-# Filter to include data only for the past 10 years
 filtered_data <- combined_data |> 
   filter(date >= Sys.Date() - years(14))
 
@@ -192,3 +191,64 @@ filtered_data |>
     color = "Ticker"
   ) +
   theme_minimal()
+
+
+
+
+
+
+# Retrieve and combine data for VNQ, USO, GLD, and DBA
+combined_data3 <- bind_rows(
+  GET_AV("VNQ") |>
+    arrange(date) |>
+    mutate(ticker = "VNQ"),
+  GET_AV("USO") |>
+    arrange(date) |>
+    mutate(ticker = "USO"),
+  GET_AV("GLD") |>
+    arrange(date) |>
+    mutate(ticker = "GLD"),
+  GET_AV("DBA") |>
+    arrange(date) |>
+    mutate(ticker = "DBA")
+)
+
+# Filter the combined data for the past 30 years
+filtered_data <- combined_data3 |>
+  filter(date >= Sys.Date() - years(30))
+
+# Calculate the estimated yearly returns for each ETF based on adjusted close
+yearly_returns <- filtered_data |>
+  group_by(ticker) |>
+  arrange(date) |>
+  summarise(
+    initial_price = first(adjusted_close),
+    final_price   = last(adjusted_close),
+    years         = as.numeric(last(date) - first(date)) / 365.25,
+    total_return_pct = (final_price / initial_price - 1) * 100,
+    CAGR_pct      = ((final_price / initial_price)^(1 / years) - 1) * 100
+  )
+
+# Display the estimated yearly returns summary
+print(yearly_returns)
+
+# Plot the adjusted close prices for VNQ, USO, GLD, and DBA with thicker lines and larger legend symbols
+filtered_data |>
+  ggplot(aes(x = date, y = adjusted_close, color = ticker)) +
+  geom_line(size = 1.5) +
+  labs(
+    title = "Adjusted Close Prices for VNQ, USO, GLD, and DBA",
+    x = "Date",
+    y = "Adjusted Close Price",
+    color = "Ticker"
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 4))) +
+  theme_minimal() +
+  theme(legend.key.size = unit(1.5, "lines"),
+        legend.text = element_text(size = 12))
+
+
+
+
+
+
