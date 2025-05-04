@@ -1,0 +1,299 @@
+---
+title: "Financial Rebalancing"
+format: html
+---
+
+## Importing data
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(gganimate)
+library(ggthemes)
+library(httr)
+library(jsonlite)
+library(lubridate)
+
+# setwd("C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING")
+setwd("C:/Users/salda/OneDrive/Documents/money team")
+FRED_key <- readLines("FRED_key.txt")
+get_fred<- function(id){
+  base_url <- "https://api.stlouisfed.org/fred/series/observations?series_id="
+  res <- GET(paste0(base_url,id,"&api_key=",FRED_key,"&file_type=json"))
+  res_content <- content(res, as = "text", encoding = "UTF-8")
+  json <- fromJSON(res_content)
+  data <-json$observations
+  data <- data |> mutate(value = as.numeric(value),# immediately convert to usable format
+                         date = as.Date(date))
+  return(data)
+}
+
+# Read your Alpha Vantage key
+AV_key <- readLines("Alphavantage_key.txt")
+
+# Function to get data from Alpha Vantage for a given ticker
+GET_AV <- function(ticker){
+  
+  # Build the URL for the monthly adjusted time series
+  url <- paste0(
+    "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED",
+    "&symbol=", ticker,
+    "&apikey=", AV_key
+  )
+  
+  # Make the GET request and parse the JSON response
+  res <- GET(url)
+  res_content <- content(res, as = "text", encoding = "UTF-8")
+  j <- fromJSON(res_content, flatten = TRUE)
+  
+  # Extract the "Monthly Adjusted Time Series" data
+  data <- j$`Monthly Adjusted Time Series`
+  
+  # Create empty vectors to store our data
+  close <- c()
+  adjusted_close <- c()
+  low <- c()
+  volume <- c()
+  dividend <- c()
+  
+  # Loop over each element in the data to unpack the values.
+  for(i in seq_along(data)){
+    close <- append(close, data[[i]][["4. close"]])
+    adjusted_close <- append(adjusted_close, data[[i]][["5. adjusted close"]])
+    low <- append(low, data[[i]][["3. low"]])
+    volume <- append(volume, data[[i]][["6. volume"]])
+    dividend <- append(dividend, data[[i]][["7. dividend amount"]])
+  }
+  
+  # Build the data frame
+  df <- data.frame(
+    date = as.Date(names(data)),
+    close = as.numeric(close),
+    adjusted_close = as.numeric(adjusted_close),
+    low = as.numeric(low),
+    volume = as.numeric(volume),
+    dividend = as.numeric(dividend)
+  )
+  
+  return(df)
+}
+```
+
+## GDP Per Capita
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+
+# Named vector of FRED IDs
+series_ids <- c(
+  USA     = "A939RC0Q052SBEA",
+  China   = "PCAGDPCNA646NWDB",
+  Germany = "PCAGDPDEA646NWDB",
+  India   = "PCAGDPINA646NWDB",
+  Japan   = "PCAGDPJPA646NWDB",
+  UK      = "PCAGDPGBA646NWDB",
+  France  = "PCAGDPFRA646NWDB",
+  Italy   = "PCAGDPITA646NWDB"
+)
+
+# Pull, tag, combine, and then filter to 1960-01-01 onward
+gdp_pc_long <- series_ids |>
+  imap_dfr(function(id, country) {
+    get_fred(id) |>
+      select(date, value) |>
+      mutate(
+        country = country,
+        gdp_pc  = value
+      ) |>
+      select(date, country, gdp_pc)
+  }) |>
+  filter(date >= as.Date("1960-01-01"))
+
+# Pivot to wide form (if you need it)
+gdp_pc_wide <- gdp_pc_long |>
+  pivot_wider(
+    names_from  = country,
+    values_from = gdp_pc
+  )
+
+head(gdp_pc_long)
+
+# And the plot:
+gdp_pc_long |>
+  ggplot(aes(x = date, y = gdp_pc, color = country)) +
+    geom_line(size = 1) +
+    labs(
+      title = "GDP per Capita (1960 onward)",
+      x     = NULL,
+      y     = "GDP per Capita (USD)",
+      color = NULL
+    ) +
+    theme_minimal()
+
+```
+
+#Inflation
+```{r}
+library(dplyr)
+library(purrr)
+
+inflation_ids <- c(
+  USA     = "FPCPITOTLZGUSA",  
+  China   = "FPCPITOTLZGCHN",  
+  Germany = "FPCPITOTLZGDEU", 
+  India   = "FPCPITOTLZGIND",  
+  Japan   = "FPCPITOTLZGJPN",  
+  UK      = "FPCPITOTLZGGBR",   
+  France  = "FPCPITOTLZGFRA", 
+  Italy   = "FPCPITOTLZGITA"   
+)
+
+# Fetch, tag, and combine into one long tibble
+inflation_long <- inflation_ids |>
+  imap_dfr(function(id, country) {
+    get_fred(id) |>
+      select(date, value) |>
+      mutate(
+        country   = country,
+        inflation = value
+      ) |>
+      select(date, country, inflation)
+  })
+
+head(inflation_long)
+
+
+inflation_long |>
+  ggplot(aes(x = date, y = inflation, color = country)) +
+    geom_line(size = 1) +
+    labs(
+      title = "Annual Consumer-Price Inflation",
+      subtitle = "Inflation, consumer prices (annual % change) for selected economies",
+      x = NULL,
+      y = "Inflation Rate (%)",
+      color = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title    = element_text(size = 16, face = "bold"),
+      plot.subtitle = element_text(size = 12),
+      legend.position = "bottom"
+    )
+```
+
+## ETFs for each of the nations
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(purrr)
+library(ggplot2)
+
+# Named vector of ETF tickers for each country
+# USA: SPY (S&P 500), China: FXI (iShares China Large-Cap), Germany: EWG (iShares MSCI Germany),
+# India: INDA (iShares MSCI India), Japan: EWJ (iShares MSCI Japan), UK: EWU (iShares MSCI United Kingdom),
+# France: EWQ (iShares MSCI France), Italy: EWI (iShares MSCI Italy)
+etf_tickers <- c(
+  USA     = "SPY",
+  China   = "FXI",
+  Germany = "EWG",
+  India   = "INDA",
+  Japan   = "EWJ",
+  UK      = "EWU",
+  France  = "EWQ",
+  Italy   = "EWI"
+)
+
+# Fetch, tag, and combine ETF price histories
+etf_prices_long <- etf_tickers |>
+  imap_dfr(function(ticker, country) {
+    GET_AV(ticker) |>
+      select(date, adjusted_close) |>
+      mutate(
+        country = country,
+        price   = adjusted_close
+      ) |>
+      select(date, country, price)
+  })
+
+# Quick look
+head(etf_prices_long)
+#> # A tibble: 6 × 3
+#>   date       country price
+#>   <date>     <chr>   <dbl>
+#> 1 1993-01-29 USA      43.5
+#> 2 1993-02-26 USA      44.1
+#> 3 1993-03-31 USA      44.8
+#> 4 1993-04-30 USA      45.4
+#> 5 1993-05-28 USA      45.2
+#> 6 1993-06-30 USA      45.5
+
+# Plot the price history for each ETF
+etf_prices_long |>
+  ggplot(aes(x = date, y = price, color = country)) +
+    geom_line(size = 1) +
+    labs(
+      title    = "ETF Price History by Country",
+      subtitle = "Adjusted closing prices for representative country ETFs",
+      x        = NULL,
+      y        = "Adjusted Close Price (USD)",
+      color    = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title     = element_text(size = 16, face = "bold"),
+      plot.subtitle  = element_text(size = 12),
+      legend.position = "bottom"
+    )
+
+```
+
+
+```{r}
+# Pivot to wide form so each country is a column
+etf_prices_wide <- etf_prices_long |>
+  pivot_wider(
+    names_from  = country,
+    values_from = price
+  )
+
+# Print the first 10 rows in the console
+head(etf_prices_wide, 10)
+
+# (Optional) For a nicer table in R Markdown or RStudio Viewer:
+# install.packages("knitr")    # if you haven’t already
+library(knitr)
+kable(
+  head(etf_prices_wide, 10),
+  caption = "ETF Adjusted Closing Prices by Country (First 10 Observations)"
+)
+
+
+```
+
+# Analysis
+```{r}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(PerformanceAnalytics)  # for return calculations
+
+# 1a) Compute monthly returns for each ETF
+etf_ret <- etf_prices_wide |>
+  arrange(date) |>
+  mutate(across(-date, ~ ROC(.x, type = "discrete"))) |>
+  drop_na()
+
+# 1b) Compute rolling annual GDP-per-capita growth per country
+#    (using quarterly GDP PC → annualized % change)
+gdp_growth <- gdp_pc_wide |>
+  arrange(date) |>
+  mutate(across(-date, ~ (./lag(., 4) - 1) * 100, .names = "{.col}_growth")) |>
+  select(date, ends_with("_growth")) |>
+  drop_na()
+
+```
