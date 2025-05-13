@@ -96,8 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="importing-data" class="level2">
-<h2 class="anchored" data-anchor-id="importing-data">Importing data</h2>
+<p>getwd() ## Importing data</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -214,7 +213,6 @@ Attaching package: 'lubridate'</code></pre>
 <span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
 <span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 <section id="gdp-per-capita" class="level2">
 <h2 class="anchored" data-anchor-id="gdp-per-capita">GDP Per Capita</h2>
 <div class="cell">
@@ -397,8 +395,13 @@ Attaching package: 'purrr'</code></pre>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick look</span></span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(etf_prices_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] date    country price  
-&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre><code>        date country    price
+1 2025-05-12     USA 582.9900
+2 2025-04-30     USA 554.5400
+3 2025-03-31     USA 559.3900
+4 2025-02-28     USA 592.3990
+5 2025-01-31     USA 600.0161
+6 2024-12-31     USA 584.3233</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   date       country price</span></span>
@@ -446,8 +449,19 @@ Attaching package: 'purrr'</code></pre>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the first 10 rows in the console</span></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(etf_prices_wide, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 0 × 1
-# ℹ 1 variable: date &lt;date&gt;</code></pre>
+<pre><code># A tibble: 10 × 9
+   date         USA China Germany India Japan    UK France Italy
+   &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+ 1 2025-05-12  583.  36.0    40.4  54.3  72.8  38.2   41.8  45.7
+ 2 2025-04-30  555.  33.9    39.5  53.6  71.4  38.1   41.0  44.2
+ 3 2025-03-31  559.  35.8    37.1  51.5  68.6  37.5   39.8  42.3
+ 4 2025-02-28  592.  35.2    36.1  48.1  68.5  37.0   39.5  40.8
+ 5 2025-01-31  600.  31.9    34.6  51.0  68.3  35.6   38.6  38.6
+ 6 2024-12-31  584.  30.4    31.8  52.6  67.1  33.9   35.9  36.0
+ 7 2024-11-29  599.  29.9    32.3  54.4  68.6  35.1   36.0  35.8
+ 8 2024-10-31  565.  31.1    32.3  54.4  67.0  34.8   37.6  37.4
+ 9 2024-09-30  570.  31.3    33.8  58.1  70.4  36.6   40.1  38.4
+10 2024-08-30  558.  26.1    32.6  57.3  70.9  36.8   39.6  38.3</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) For a nicer table in R Markdown or RStudio Viewer:</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("knitr")    # if you haven’t already</span></span>
@@ -457,14 +471,143 @@ Attaching package: 'purrr'</code></pre>
 <span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"ETF Adjusted Closing Prices by Country (First 10 Observations)"</span></span>
 <span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="caption-top">
+<table class="caption-top table table-sm table-striped small">
 <caption>ETF Adjusted Closing Prices by Country (First 10 Observations)</caption>
+<colgroup>
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">date</th>
+<th style="text-align: right;">USA</th>
+<th style="text-align: right;">China</th>
+<th style="text-align: right;">Germany</th>
+<th style="text-align: right;">India</th>
+<th style="text-align: right;">Japan</th>
+<th style="text-align: right;">UK</th>
+<th style="text-align: right;">France</th>
+<th style="text-align: right;">Italy</th>
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td style="text-align: left;">2025-05-12</td>
+<td style="text-align: right;">582.9900</td>
+<td style="text-align: right;">36.0400</td>
+<td style="text-align: right;">40.38</td>
+<td style="text-align: right;">54.3200</td>
+<td style="text-align: right;">72.8000</td>
+<td style="text-align: right;">38.2400</td>
+<td style="text-align: right;">41.8100</td>
+<td style="text-align: right;">45.6600</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2025-04-30</td>
+<td style="text-align: right;">554.5400</td>
+<td style="text-align: right;">33.8600</td>
+<td style="text-align: right;">39.49</td>
+<td style="text-align: right;">53.5700</td>
+<td style="text-align: right;">71.4300</td>
+<td style="text-align: right;">38.1000</td>
+<td style="text-align: right;">41.0400</td>
+<td style="text-align: right;">44.2100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2025-03-31</td>
+<td style="text-align: right;">559.3900</td>
+<td style="text-align: right;">35.8400</td>
+<td style="text-align: right;">37.08</td>
+<td style="text-align: right;">51.4800</td>
+<td style="text-align: right;">68.5600</td>
+<td style="text-align: right;">37.4700</td>
+<td style="text-align: right;">39.8000</td>
+<td style="text-align: right;">42.3200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2025-02-28</td>
+<td style="text-align: right;">592.3990</td>
+<td style="text-align: right;">35.2300</td>
+<td style="text-align: right;">36.07</td>
+<td style="text-align: right;">48.1000</td>
+<td style="text-align: right;">68.4700</td>
+<td style="text-align: right;">37.0400</td>
+<td style="text-align: right;">39.5400</td>
+<td style="text-align: right;">40.8000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2025-01-31</td>
+<td style="text-align: right;">600.0161</td>
+<td style="text-align: right;">31.8900</td>
+<td style="text-align: right;">34.63</td>
+<td style="text-align: right;">50.9900</td>
+<td style="text-align: right;">68.3100</td>
+<td style="text-align: right;">35.6100</td>
+<td style="text-align: right;">38.6300</td>
+<td style="text-align: right;">38.5500</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-12-31</td>
+<td style="text-align: right;">584.3233</td>
+<td style="text-align: right;">30.4400</td>
+<td style="text-align: right;">31.82</td>
+<td style="text-align: right;">52.6400</td>
+<td style="text-align: right;">67.1000</td>
+<td style="text-align: right;">33.9000</td>
+<td style="text-align: right;">35.8800</td>
+<td style="text-align: right;">35.9700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-11-29</td>
+<td style="text-align: right;">598.7531</td>
+<td style="text-align: right;">29.8707</td>
+<td style="text-align: right;">32.27</td>
+<td style="text-align: right;">54.3820</td>
+<td style="text-align: right;">68.6140</td>
+<td style="text-align: right;">35.0640</td>
+<td style="text-align: right;">35.9809</td>
+<td style="text-align: right;">35.7916</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-10-31</td>
+<td style="text-align: right;">565.0568</td>
+<td style="text-align: right;">31.1025</td>
+<td style="text-align: right;">32.32</td>
+<td style="text-align: right;">54.4217</td>
+<td style="text-align: right;">67.0190</td>
+<td style="text-align: right;">34.8191</td>
+<td style="text-align: right;">37.6285</td>
+<td style="text-align: right;">37.4462</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-09-30</td>
+<td style="text-align: right;">570.1445</td>
+<td style="text-align: right;">31.3194</td>
+<td style="text-align: right;">33.84</td>
+<td style="text-align: right;">58.1048</td>
+<td style="text-align: right;">70.4355</td>
+<td style="text-align: right;">36.6409</td>
+<td style="text-align: right;">40.1000</td>
+<td style="text-align: right;">38.3720</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-08-30</td>
+<td style="text-align: right;">558.4127</td>
+<td style="text-align: right;">26.0765</td>
+<td style="text-align: right;">32.63</td>
+<td style="text-align: right;">57.3006</td>
+<td style="text-align: right;">70.8588</td>
+<td style="text-align: right;">36.7584</td>
+<td style="text-align: right;">39.5839</td>
+<td style="text-align: right;">38.2637</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -536,20 +679,355 @@ Attaching package: 'PerformanceAnalytics'</code></pre>
 
     legend</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1a) Compute monthly returns for each ETF</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>etf_ret <span class="ot">&lt;-</span> etf_prices_wide <span class="sc">|&gt;</span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> <span class="fu">ROC</span>(.x, <span class="at">type =</span> <span class="st">"discrete"</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1b) Compute rolling annual GDP-per-capita growth per country</span></span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co">#    (using quarterly GDP PC → annualized % change)</span></span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_pc_wide <span class="sc">|&gt;</span></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> (.<span class="sc">/</span><span class="fu">lag</span>(., <span class="dv">4</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="at">.names =</span> <span class="st">"{.col}_growth"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, <span class="fu">ends_with</span>(<span class="st">"_growth"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># up at the top of your script</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TTR)               <span class="co"># &lt;- gives you ROC()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'TTR' was built under R version 4.4.3</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PerformanceAnalytics)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>etf_ret <span class="ot">&lt;-</span> etf_prices_wide <span class="sc">|&gt;</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> <span class="fu">ROC</span>(.x, <span class="at">type =</span> <span class="st">"discrete"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">drop_na</span>()</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1b) Compute rolling annual GDP-per-capita growth per country</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co">#    (using quarterly GDP PC → annualized % change)</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>gdp_growth <span class="ot">&lt;-</span> gdp_pc_wide <span class="sc">|&gt;</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> (.<span class="sc">/</span><span class="fu">lag</span>(., <span class="dv">4</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="at">.names =</span> <span class="st">"{.col}_growth"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, <span class="fu">ends_with</span>(<span class="st">"_growth"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)                   <span class="co"># for as.yearqtr()</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TTR)                   <span class="co"># for ROC()</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PerformanceAnalytics)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 0) Define your regions</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>regions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"USA"</span>,<span class="st">"China"</span>,<span class="st">"Germany"</span>,<span class="st">"India"</span>,<span class="st">"Japan"</span>,<span class="st">"UK"</span>,<span class="st">"France"</span>,<span class="st">"Italy"</span>)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Quarterly GDP‐pc growth (annualized %)</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>gdp_growth_q <span class="ot">&lt;-</span> gdp_pc_wide <span class="sc">|&gt;</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> (.<span class="sc">/</span><span class="fu">lag</span>(.,<span class="dv">4</span>) <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="at">.names =</span> <span class="st">"{.col}_g"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">as.yearqtr</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">|&gt;</span></span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, <span class="fu">ends_with</span>(<span class="st">"_g"</span>))</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a><span class="co"># turn to long form: one row per country</span></span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>gdp_long <span class="ot">&lt;-</span> gdp_growth_q <span class="sc">|&gt;</span></span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols      =</span> <span class="fu">ends_with</span>(<span class="st">"_g"</span>),</span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to  =</span> <span class="st">"country"</span>,</span>
+<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.+)_g"</span>,</span>
+<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"gdp_g"</span></span>
+<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Quarterly inflation</span></span>
+<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a>infl_q <span class="ot">&lt;-</span> inflation_long <span class="sc">|&gt;</span></span>
+<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">as.yearqtr</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter, country) <span class="sc">|&gt;</span></span>
+<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a><span class="co"># turn to long form</span></span>
+<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a>infl_long <span class="ot">&lt;-</span> infl_q <span class="sc">|&gt;</span></span>
+<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, country, inflation) <span class="sc">|&gt;</span></span>
+<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">infl_i =</span> inflation)</span>
+<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-43"><a href="#cb50-43" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Merge signals into one long table</span></span>
+<span id="cb50-44"><a href="#cb50-44" aria-hidden="true" tabindex="-1"></a>signals_long <span class="ot">&lt;-</span> <span class="fu">full_join</span>(gdp_long, infl_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"quarter"</span>,<span class="st">"country"</span>))</span>
+<span id="cb50-45"><a href="#cb50-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-46"><a href="#cb50-46" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) Compute monthly ETF returns &amp; tag quarter</span></span>
+<span id="cb50-47"><a href="#cb50-47" aria-hidden="true" tabindex="-1"></a>etf_ret <span class="ot">&lt;-</span> etf_prices_wide <span class="sc">|&gt;</span></span>
+<span id="cb50-48"><a href="#cb50-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb50-49"><a href="#cb50-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>date, <span class="sc">~</span> <span class="fu">ROC</span>(.x, <span class="at">type =</span> <span class="st">"discrete"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb50-50"><a href="#cb50-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-51"><a href="#cb50-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">as.yearqtr</span>(date))</span>
+<span id="cb50-52"><a href="#cb50-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-53"><a href="#cb50-53" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Calendar strategy: equal‐weight</span></span>
+<span id="cb50-54"><a href="#cb50-54" aria-hidden="true" tabindex="-1"></a>port_cal <span class="ot">&lt;-</span> etf_ret <span class="sc">|&gt;</span></span>
+<span id="cb50-55"><a href="#cb50-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-56"><a href="#cb50-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">port =</span> <span class="fu">mean</span>(<span class="fu">c_across</span>(<span class="fu">all_of</span>(regions)))) <span class="sc">|&gt;</span></span>
+<span id="cb50-57"><a href="#cb50-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-58"><a href="#cb50-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, port)</span>
+<span id="cb50-59"><a href="#cb50-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-60"><a href="#cb50-60" aria-hidden="true" tabindex="-1"></a><span class="co"># 6) Tactical weights in long form</span></span>
+<span id="cb50-61"><a href="#cb50-61" aria-hidden="true" tabindex="-1"></a>tac_long <span class="ot">&lt;-</span> signals_long <span class="sc">|&gt;</span></span>
+<span id="cb50-62"><a href="#cb50-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">|&gt;</span></span>
+<span id="cb50-63"><a href="#cb50-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb50-64"><a href="#cb50-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">down =</span> (gdp_g <span class="sc">&lt;</span> <span class="dv">0</span>) <span class="sc">|</span> (infl_i <span class="sc">&gt;</span> <span class="dv">4</span>),</span>
+<span id="cb50-65"><a href="#cb50-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">down =</span> <span class="fu">replace_na</span>(down, <span class="cn">FALSE</span>),</span>
+<span id="cb50-66"><a href="#cb50-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">base =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">n</span>(),</span>
+<span id="cb50-67"><a href="#cb50-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">w0   =</span> <span class="fu">if_else</span>(down, base <span class="sc">*</span> <span class="fl">0.5</span>, <span class="cn">NA_real_</span>)</span>
+<span id="cb50-68"><a href="#cb50-68" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb50-69"><a href="#cb50-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-70"><a href="#cb50-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">|&gt;</span></span>
+<span id="cb50-71"><a href="#cb50-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb50-72"><a href="#cb50-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">freed =</span> <span class="fu">sum</span>(base <span class="sc">-</span> w0, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb50-73"><a href="#cb50-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">up    =</span> <span class="sc">!</span>down,</span>
+<span id="cb50-74"><a href="#cb50-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">w     =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(w0), freed <span class="sc">/</span> <span class="fu">sum</span>(up), w0)</span>
+<span id="cb50-75"><a href="#cb50-75" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb50-76"><a href="#cb50-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-77"><a href="#cb50-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, country, w)</span>
+<span id="cb50-78"><a href="#cb50-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-79"><a href="#cb50-79" aria-hidden="true" tabindex="-1"></a><span class="co"># 7) Pivot tactical weights back to wide (one column per country)</span></span>
+<span id="cb50-80"><a href="#cb50-80" aria-hidden="true" tabindex="-1"></a>quarterly_wts <span class="ot">&lt;-</span> tac_long <span class="sc">|&gt;</span></span>
+<span id="cb50-81"><a href="#cb50-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb50-82"><a href="#cb50-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from  =</span> country,</span>
+<span id="cb50-83"><a href="#cb50-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> w,</span>
+<span id="cb50-84"><a href="#cb50-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">""</span>,</span>
+<span id="cb50-85"><a href="#cb50-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="dv">0</span></span>
+<span id="cb50-86"><a href="#cb50-86" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb50-87"><a href="#cb50-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(.x, <span class="st">"_wt"</span>), <span class="fu">all_of</span>(regions))</span>
+<span id="cb50-88"><a href="#cb50-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-89"><a href="#cb50-89" aria-hidden="true" tabindex="-1"></a><span class="co"># 8) Tactical strategy: apply those weights each month</span></span>
+<span id="cb50-90"><a href="#cb50-90" aria-hidden="true" tabindex="-1"></a>port_tac <span class="ot">&lt;-</span> etf_ret <span class="sc">|&gt;</span></span>
+<span id="cb50-91"><a href="#cb50-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(quarterly_wts, <span class="at">by =</span> <span class="st">"quarter"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-92"><a href="#cb50-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-93"><a href="#cb50-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb50-94"><a href="#cb50-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">port =</span> <span class="fu">sum</span>(</span>
+<span id="cb50-95"><a href="#cb50-95" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c_across</span>(<span class="fu">all_of</span>(regions)) <span class="sc">*</span></span>
+<span id="cb50-96"><a href="#cb50-96" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c_across</span>(<span class="fu">all_of</span>(<span class="fu">paste0</span>(regions, <span class="st">"_wt"</span>)))</span>
+<span id="cb50-97"><a href="#cb50-97" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb50-98"><a href="#cb50-98" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb50-99"><a href="#cb50-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-100"><a href="#cb50-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, port)</span>
+<span id="cb50-101"><a href="#cb50-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-102"><a href="#cb50-102" aria-hidden="true" tabindex="-1"></a><span class="co"># 9) Compare &amp; plot cumulative returns</span></span>
+<span id="cb50-103"><a href="#cb50-103" aria-hidden="true" tabindex="-1"></a>compare <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb50-104"><a href="#cb50-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">Calendar =</span> port_cal,</span>
+<span id="cb50-105"><a href="#cb50-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tactical =</span> port_tac,</span>
+<span id="cb50-106"><a href="#cb50-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"strategy"</span></span>
+<span id="cb50-107"><a href="#cb50-107" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-108"><a href="#cb50-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-109"><a href="#cb50-109" aria-hidden="true" tabindex="-1"></a>compare <span class="sc">|&gt;</span></span>
+<span id="cb50-110"><a href="#cb50-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">|&gt;</span></span>
+<span id="cb50-111"><a href="#cb50-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb50-112"><a href="#cb50-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cum =</span> <span class="fu">cumprod</span>(<span class="dv">1</span> <span class="sc">+</span> port) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-113"><a href="#cb50-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, cum, <span class="at">color =</span> strategy)) <span class="sc">+</span></span>
+<span id="cb50-114"><a href="#cb50-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb50-115"><a href="#cb50-115" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb50-116"><a href="#cb50-116" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Calendar vs. GDP/Inflation Tactical Rebalancing"</span>,</span>
+<span id="cb50-117"><a href="#cb50-117" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Cumulative Return"</span>,</span>
+<span id="cb50-118"><a href="#cb50-118" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="cn">NULL</span></span>
+<span id="cb50-119"><a href="#cb50-119" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb50-120"><a href="#cb50-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_line()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="questionn-2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 10) Annualized performance table</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>wide_ret <span class="ot">&lt;-</span> compare <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> strategy, <span class="at">values_from =</span> port) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>date)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>ret_xts  <span class="ot">&lt;-</span> <span class="fu">xts</span>(wide_ret, <span class="at">order.by =</span> compare<span class="sc">$</span>date[compare<span class="sc">$</span>strategy <span class="sc">==</span> <span class="st">"Calendar"</span>])</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>PerformanceAnalytics<span class="sc">::</span><span class="fu">table.AnnualizedReturns</span>(ret_xts, <span class="at">Rf =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          Calendar Tactical
+Annualized Return           0.0763  -0.0056
+Annualized Std Dev          0.1493   0.0449
+Annualized Sharpe (Rf=0%)   0.5114  -0.1256</code></pre>
+</div>
+</div>
+</section>
+<section id="strategy" class="level1">
+<h1>STRATEGY</h1>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build GDP per capita table</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>series_ids <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">USA     =</span> <span class="st">"A939RC0Q052SBEA"</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">China   =</span> <span class="st">"PCAGDPCNA646NWDB"</span>,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Germany =</span> <span class="st">"PCAGDPDEA646NWDB"</span>,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">India   =</span> <span class="st">"PCAGDPINA646NWDB"</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Japan   =</span> <span class="st">"PCAGDPJPA646NWDB"</span>,</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">UK      =</span> <span class="st">"PCAGDPGBA646NWDB"</span>,</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">France  =</span> <span class="st">"PCAGDPFRA646NWDB"</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Italy   =</span> <span class="st">"PCAGDPITA646NWDB"</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>gdp_pc_long <span class="ot">&lt;-</span> <span class="fu">imap_dfr</span>(series_ids, <span class="cf">function</span>(id, country) {</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_fred</span>(id) <span class="sc">%&gt;%</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">gdp_pc =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">country =</span> country)</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">%&gt;%</span></span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"1960-01-01"</span>))</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Build inflation long table</span></span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>inflation_ids <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">USA     =</span> <span class="st">"FPCPITOTLZGUSA"</span>,</span>
+<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">China   =</span> <span class="st">"FPCPITOTLZGCHN"</span>,</span>
+<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Germany =</span> <span class="st">"FPCPITOTLZGDEU"</span>,</span>
+<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">India   =</span> <span class="st">"FPCPITOTLZGIND"</span>,</span>
+<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">Japan   =</span> <span class="st">"FPCPITOTLZGJPN"</span>,</span>
+<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">UK      =</span> <span class="st">"FPCPITOTLZGGBR"</span>,</span>
+<span id="cb54-27"><a href="#cb54-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">France  =</span> <span class="st">"FPCPITOTLZGFRA"</span>,</span>
+<span id="cb54-28"><a href="#cb54-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">Italy   =</span> <span class="st">"FPCPITOTLZGITA"</span></span>
+<span id="cb54-29"><a href="#cb54-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-30"><a href="#cb54-30" aria-hidden="true" tabindex="-1"></a>inflation_long <span class="ot">&lt;-</span> <span class="fu">imap_dfr</span>(inflation_ids, <span class="cf">function</span>(id, country) {</span>
+<span id="cb54-31"><a href="#cb54-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_fred</span>(id) <span class="sc">%&gt;%</span></span>
+<span id="cb54-32"><a href="#cb54-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">inflation =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb54-33"><a href="#cb54-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">country =</span> country)</span>
+<span id="cb54-34"><a href="#cb54-34" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb54-35"><a href="#cb54-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-36"><a href="#cb54-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 6) Fetch VEA &amp; VWO monthly returns</span></span>
+<span id="cb54-37"><a href="#cb54-37" aria-hidden="true" tabindex="-1"></a>vea_ret <span class="ot">&lt;-</span> <span class="fu">GET_AV</span>(<span class="st">"VEA"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-38"><a href="#cb54-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ret_dev =</span> adjusted_close <span class="sc">/</span> <span class="fu">lag</span>(adjusted_close) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-39"><a href="#cb54-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, ret_dev) <span class="sc">%&gt;%</span></span>
+<span id="cb54-40"><a href="#cb54-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb54-41"><a href="#cb54-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-42"><a href="#cb54-42" aria-hidden="true" tabindex="-1"></a>vwo_ret <span class="ot">&lt;-</span> <span class="fu">GET_AV</span>(<span class="st">"VWO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-43"><a href="#cb54-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ret_emg =</span> adjusted_close <span class="sc">/</span> <span class="fu">lag</span>(adjusted_close) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-44"><a href="#cb54-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, ret_emg) <span class="sc">%&gt;%</span></span>
+<span id="cb54-45"><a href="#cb54-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb54-46"><a href="#cb54-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-47"><a href="#cb54-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 7) Compute quarterly EM &amp; DM macro signals</span></span>
+<span id="cb54-48"><a href="#cb54-48" aria-hidden="true" tabindex="-1"></a>dev_countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"USA"</span>,<span class="st">"Japan"</span>,<span class="st">"UK"</span>,<span class="st">"France"</span>,<span class="st">"Germany"</span>)</span>
+<span id="cb54-49"><a href="#cb54-49" aria-hidden="true" tabindex="-1"></a>emg_countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"China"</span>,<span class="st">"India"</span>)</span>
+<span id="cb54-50"><a href="#cb54-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-51"><a href="#cb54-51" aria-hidden="true" tabindex="-1"></a>gdp_growth_country <span class="ot">&lt;-</span> gdp_pc_long <span class="sc">%&gt;%</span></span>
+<span id="cb54-52"><a href="#cb54-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(country, date) <span class="sc">%&gt;%</span></span>
+<span id="cb54-53"><a href="#cb54-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">%&gt;%</span></span>
+<span id="cb54-54"><a href="#cb54-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb54-55"><a href="#cb54-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_growth =</span> (gdp_pc <span class="sc">/</span> <span class="fu">lag</span>(gdp_pc, <span class="dv">4</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb54-56"><a href="#cb54-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter    =</span> <span class="fu">as.yearqtr</span>(date)</span>
+<span id="cb54-57"><a href="#cb54-57" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb54-58"><a href="#cb54-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(gdp_growth)) <span class="sc">%&gt;%</span></span>
+<span id="cb54-59"><a href="#cb54-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb54-60"><a href="#cb54-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-61"><a href="#cb54-61" aria-hidden="true" tabindex="-1"></a>gdp_emg_q <span class="ot">&lt;-</span> gdp_growth_country <span class="sc">%&gt;%</span></span>
+<span id="cb54-62"><a href="#cb54-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> emg_countries) <span class="sc">%&gt;%</span></span>
+<span id="cb54-63"><a href="#cb54-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb54-64"><a href="#cb54-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">gdp_emg =</span> <span class="fu">mean</span>(gdp_growth, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">.groups=</span><span class="st">"drop"</span>)</span>
+<span id="cb54-65"><a href="#cb54-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-66"><a href="#cb54-66" aria-hidden="true" tabindex="-1"></a>gdp_dev_q <span class="ot">&lt;-</span> gdp_growth_country <span class="sc">%&gt;%</span></span>
+<span id="cb54-67"><a href="#cb54-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> dev_countries) <span class="sc">%&gt;%</span></span>
+<span id="cb54-68"><a href="#cb54-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb54-69"><a href="#cb54-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">gdp_dev =</span> <span class="fu">mean</span>(gdp_growth, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">.groups=</span><span class="st">"drop"</span>)</span>
+<span id="cb54-70"><a href="#cb54-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-71"><a href="#cb54-71" aria-hidden="true" tabindex="-1"></a>infl_long_q <span class="ot">&lt;-</span> inflation_long <span class="sc">%&gt;%</span></span>
+<span id="cb54-72"><a href="#cb54-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">as.yearqtr</span>(date))</span>
+<span id="cb54-73"><a href="#cb54-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-74"><a href="#cb54-74" aria-hidden="true" tabindex="-1"></a>infl_emg_q <span class="ot">&lt;-</span> infl_long_q <span class="sc">%&gt;%</span></span>
+<span id="cb54-75"><a href="#cb54-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> emg_countries) <span class="sc">%&gt;%</span></span>
+<span id="cb54-76"><a href="#cb54-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb54-77"><a href="#cb54-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-78"><a href="#cb54-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">infl_emg =</span> <span class="fu">mean</span>(inflation, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">.groups=</span><span class="st">"drop"</span>)</span>
+<span id="cb54-79"><a href="#cb54-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-80"><a href="#cb54-80" aria-hidden="true" tabindex="-1"></a>infl_dev_q <span class="ot">&lt;-</span> infl_long_q <span class="sc">%&gt;%</span></span>
+<span id="cb54-81"><a href="#cb54-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> dev_countries) <span class="sc">%&gt;%</span></span>
+<span id="cb54-82"><a href="#cb54-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb54-83"><a href="#cb54-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_tail</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-84"><a href="#cb54-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">infl_dev =</span> <span class="fu">mean</span>(inflation, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">.groups=</span><span class="st">"drop"</span>)</span>
+<span id="cb54-85"><a href="#cb54-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-86"><a href="#cb54-86" aria-hidden="true" tabindex="-1"></a>signals <span class="ot">&lt;-</span> gdp_emg_q <span class="sc">%&gt;%</span></span>
+<span id="cb54-87"><a href="#cb54-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(infl_emg_q, <span class="at">by=</span><span class="st">"quarter"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-88"><a href="#cb54-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gdp_dev_q,   <span class="at">by=</span><span class="st">"quarter"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-89"><a href="#cb54-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(infl_dev_q,  <span class="at">by=</span><span class="st">"quarter"</span>)</span>
+<span id="cb54-90"><a href="#cb54-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-91"><a href="#cb54-91" aria-hidden="true" tabindex="-1"></a><span class="co"># 8) Build monthly table with signals</span></span>
+<span id="cb54-92"><a href="#cb54-92" aria-hidden="true" tabindex="-1"></a>sig_monthly <span class="ot">&lt;-</span> vea_ret <span class="sc">%&gt;%</span></span>
+<span id="cb54-93"><a href="#cb54-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(vwo_ret, <span class="at">by=</span><span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-94"><a href="#cb54-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">as.yearqtr</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb54-95"><a href="#cb54-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(signals, <span class="at">by=</span><span class="st">"quarter"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-96"><a href="#cb54-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(gdp_emg, infl_emg, gdp_dev, infl_dev)</span>
+<span id="cb54-97"><a href="#cb54-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-98"><a href="#cb54-98" aria-hidden="true" tabindex="-1"></a><span class="co"># 9) Calendar vs. Tactical strategies, starting at 75/25</span></span>
+<span id="cb54-99"><a href="#cb54-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-100"><a href="#cb54-100" aria-hidden="true" tabindex="-1"></a>infl_thr <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb54-101"><a href="#cb54-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-102"><a href="#cb54-102" aria-hidden="true" tabindex="-1"></a><span class="co"># — Calendar always 75% VEA / 25% VWO</span></span>
+<span id="cb54-103"><a href="#cb54-103" aria-hidden="true" tabindex="-1"></a>baseline <span class="ot">&lt;-</span> sig_monthly <span class="sc">%&gt;%</span></span>
+<span id="cb54-104"><a href="#cb54-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb54-105"><a href="#cb54-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vea    =</span> <span class="fl">0.75</span>,</span>
+<span id="cb54-106"><a href="#cb54-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vwo    =</span> <span class="fl">0.25</span>,</span>
+<span id="cb54-107"><a href="#cb54-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">strat_ret =</span> wt_vea <span class="sc">*</span> ret_dev <span class="sc">+</span> wt_vwo <span class="sc">*</span> ret_emg</span>
+<span id="cb54-108"><a href="#cb54-108" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb54-109"><a href="#cb54-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-110"><a href="#cb54-110" aria-hidden="true" tabindex="-1"></a><span class="co"># — Tactical starts 75/25, then tilts away from any “down” region</span></span>
+<span id="cb54-111"><a href="#cb54-111" aria-hidden="true" tabindex="-1"></a>tactical <span class="ot">&lt;-</span> sig_monthly <span class="sc">%&gt;%</span></span>
+<span id="cb54-112"><a href="#cb54-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb54-113"><a href="#cb54-113" aria-hidden="true" tabindex="-1"></a>    <span class="co"># signals</span></span>
+<span id="cb54-114"><a href="#cb54-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">emg_down =</span> (gdp_emg <span class="sc">&lt;</span> <span class="dv">0</span>) <span class="sc">|</span> (infl_emg <span class="sc">&gt;</span> infl_thr),</span>
+<span id="cb54-115"><a href="#cb54-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">dev_down =</span> (gdp_dev <span class="sc">&lt;</span> <span class="dv">0</span>) <span class="sc">|</span> (infl_dev <span class="sc">&gt;</span> infl_thr),</span>
+<span id="cb54-116"><a href="#cb54-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">emg_down =</span> <span class="fu">replace_na</span>(emg_down, <span class="cn">FALSE</span>),</span>
+<span id="cb54-117"><a href="#cb54-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">dev_down =</span> <span class="fu">replace_na</span>(dev_down, <span class="cn">FALSE</span>),</span>
+<span id="cb54-118"><a href="#cb54-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-119"><a href="#cb54-119" aria-hidden="true" tabindex="-1"></a>    <span class="co"># start at 25% VWO, 75% VEA</span></span>
+<span id="cb54-120"><a href="#cb54-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vwo =</span> <span class="fl">0.25</span>,</span>
+<span id="cb54-121"><a href="#cb54-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vea =</span> <span class="dv">1</span> <span class="sc">-</span> wt_vwo,</span>
+<span id="cb54-122"><a href="#cb54-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-123"><a href="#cb54-123" aria-hidden="true" tabindex="-1"></a>    <span class="co"># if Emerging is down → cut VWO in half (12.5%), give rest to VEA</span></span>
+<span id="cb54-124"><a href="#cb54-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vwo =</span> <span class="fu">if_else</span>(emg_down, wt_vwo <span class="sc">*</span> <span class="fl">0.5</span>, wt_vwo),</span>
+<span id="cb54-125"><a href="#cb54-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vea =</span> <span class="dv">1</span> <span class="sc">-</span> wt_vwo,</span>
+<span id="cb54-126"><a href="#cb54-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-127"><a href="#cb54-127" aria-hidden="true" tabindex="-1"></a>    <span class="co"># if Developed is down → cut VEA in half (37.5%), give rest to VWO</span></span>
+<span id="cb54-128"><a href="#cb54-128" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vea =</span> <span class="fu">if_else</span>(dev_down, wt_vea <span class="sc">*</span> <span class="fl">0.5</span>, wt_vea),</span>
+<span id="cb54-129"><a href="#cb54-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">wt_vwo =</span> <span class="dv">1</span> <span class="sc">-</span> wt_vea,</span>
+<span id="cb54-130"><a href="#cb54-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-131"><a href="#cb54-131" aria-hidden="true" tabindex="-1"></a>    <span class="co"># portfolio return</span></span>
+<span id="cb54-132"><a href="#cb54-132" aria-hidden="true" tabindex="-1"></a>    <span class="at">strat_ret =</span> wt_vea <span class="sc">*</span> ret_dev <span class="sc">+</span> wt_vwo <span class="sc">*</span> ret_emg</span>
+<span id="cb54-133"><a href="#cb54-133" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb54-134"><a href="#cb54-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-135"><a href="#cb54-135" aria-hidden="true" tabindex="-1"></a><span class="co"># 10) Combine, plot &amp; metrics (unchanged)</span></span>
+<span id="cb54-136"><a href="#cb54-136" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb54-137"><a href="#cb54-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">Calendar75_25 =</span> baseline  <span class="sc">%&gt;%</span> <span class="fu">select</span>(date, strat_ret),</span>
+<span id="cb54-138"><a href="#cb54-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tactical      =</span> tactical <span class="sc">%&gt;%</span> <span class="fu">select</span>(date, strat_ret),</span>
+<span id="cb54-139"><a href="#cb54-139" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"strategy"</span></span>
+<span id="cb54-140"><a href="#cb54-140" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-141"><a href="#cb54-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-142"><a href="#cb54-142" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb54-143"><a href="#cb54-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb54-144"><a href="#cb54-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb54-145"><a href="#cb54-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cum =</span> <span class="fu">cumprod</span>(<span class="dv">1</span> <span class="sc">+</span> strat_ret) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb54-146"><a href="#cb54-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, cum, <span class="at">color =</span> strategy)) <span class="sc">+</span></span>
+<span id="cb54-147"><a href="#cb54-147" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb54-148"><a href="#cb54-148" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb54-149"><a href="#cb54-149" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"VEA/VWO: Calendar 75/25 vs. Tactical Tilt (EM &amp; Dev Signals)"</span>,</span>
+<span id="cb54-150"><a href="#cb54-150" aria-hidden="true" tabindex="-1"></a>      <span class="at">x     =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Cumulative Return"</span></span>
+<span id="cb54-151"><a href="#cb54-151" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb54-152"><a href="#cb54-152" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="questionn-2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(strategy) <span class="sc">%&gt;%</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_months =</span> <span class="fu">n</span>(),</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cum_ret  =</span> <span class="fu">prod</span>(<span class="dv">1</span> <span class="sc">+</span> strat_ret) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ann_ret  =</span> (<span class="dv">1</span> <span class="sc">+</span> cum_ret)<span class="sc">^</span>(<span class="dv">12</span> <span class="sc">/</span> n_months) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ann_vol  =</span> <span class="fu">sd</span>(strat_ret, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">12</span>),</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sharpe   =</span> ann_ret <span class="sc">/</span> ann_vol,</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups  =</span> <span class="st">"drop"</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(strategy, ann_ret, ann_vol, sharpe)</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  strategy      ann_ret ann_vol sharpe
+  &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+1 Calendar75_25 -0.109    0.173 -0.630
+2 Tactical      -0.0993   0.177 -0.562</code></pre>
+</div>
+</div>
+</section>
 </section>
 
 </main>
