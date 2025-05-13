@@ -89,16 +89,18 @@ library(tidyr)
 library(ggplot2)
 library(purrr)
 
-# Named vector of FRED IDs
+# Named vector of FRED IDs (replaced Brazil with Mexico)
 series_ids <- c(
-  USA     = "A939RC0Q052SBEA",
-  China   = "PCAGDPCNA646NWDB",
-  Germany = "PCAGDPDEA646NWDB",
-  India   = "PCAGDPINA646NWDB",
-  Japan   = "PCAGDPJPA646NWDB",
-  UK      = "PCAGDPGBA646NWDB",
-  France  = "PCAGDPFRA646NWDB",
-  Italy   = "PCAGDPITA646NWDB"
+  USA          = "A939RC0Q052SBEA",
+  China        = "PCAGDPCNA646NWDB",
+  Germany      = "PCAGDPDEA646NWDB",
+  India        = "PCAGDPINA646NWDB",
+  Japan        = "PCAGDPJPA646NWDB",
+  UK           = "PCAGDPGBA646NWDB",
+  France       = "PCAGDPFRA646NWDB",
+  Italy        = "PCAGDPITA646NWDB",
+  Mexico       = "PCAGDPMXA646NWDB",   # was Brazil
+  `South Korea`= "PCAGDPKRA646NWDB"
 )
 
 # Pull, tag, combine, and then filter to 1960-01-01 onward
@@ -140,17 +142,22 @@ gdp_pc_long |>
 #Inflation
 ```{r}
 library(dplyr)
+library(tidyr)
+library(ggplot2)
 library(purrr)
 
+# Updated named vector of FRED IDs for inflation (Mexico instead of Brazil)
 inflation_ids <- c(
-  USA     = "FPCPITOTLZGUSA",  
-  China   = "FPCPITOTLZGCHN",  
-  Germany = "FPCPITOTLZGDEU", 
-  India   = "FPCPITOTLZGIND",  
-  Japan   = "FPCPITOTLZGJPN",  
-  UK      = "FPCPITOTLZGGBR",   
-  France  = "FPCPITOTLZGFRA", 
-  Italy   = "FPCPITOTLZGITA"   
+  USA           = "FPCPITOTLZGUSA",
+  China         = "FPCPITOTLZGCHN",
+  Germany       = "FPCPITOTLZGDEU",
+  India         = "FPCPITOTLZGIND",
+  Japan         = "FPCPITOTLZGJPN",
+  UK            = "FPCPITOTLZGGBR",
+  France        = "FPCPITOTLZGFRA",
+  Italy         = "FPCPITOTLZGITA",
+  Mexico        = "FPCPITOTLZGMEX",
+  `South Korea` = "FPCPITOTLZGKOR"
 )
 
 # Fetch, tag, and combine into one long tibble
@@ -165,18 +172,19 @@ inflation_long <- inflation_ids |>
       select(date, country, inflation)
   })
 
+# Quick peek
 head(inflation_long)
 
-
+# Plot
 inflation_long |>
   ggplot(aes(x = date, y = inflation, color = country)) +
     geom_line(size = 1) +
     labs(
-      title = "Annual Consumer-Price Inflation",
+      title    = "Annual Consumer-Price Inflation",
       subtitle = "Inflation, consumer prices (annual % change) for selected economies",
-      x = NULL,
-      y = "Inflation Rate (%)",
-      color = NULL
+      x        = NULL,
+      y        = "Inflation Rate (%)",
+      color    = NULL
     ) +
     theme_minimal() +
     theme(
@@ -184,6 +192,7 @@ inflation_long |>
       plot.subtitle = element_text(size = 12),
       legend.position = "bottom"
     )
+
 ```
 
 ## ETFs for each of the nations
@@ -301,294 +310,174 @@ gdp_growth <- gdp_pc_wide |>
 
 
 
-```{r}
-library(dplyr)
-library(tidyr)
-library(zoo)                   # for as.yearqtr()
-library(TTR)                   # for ROC()
-library(ggplot2)
-library(PerformanceAnalytics)
-library(xts)
-
-# 0) Define your regions
-regions <- c("USA","China","Germany","India","Japan","UK","France","Italy")
-
-# 1) Quarterly GDP‐pc growth (annualized %)
-gdp_growth_q <- gdp_pc_wide |>
-  arrange(date) |>
-  mutate(across(-date, ~ (./lag(.,4) - 1)*100, .names = "{.col}_g")) |>
-  mutate(quarter = as.yearqtr(date)) |>
-  group_by(quarter) |>
-  slice_tail(n = 1) |>
-  ungroup() |>
-  select(quarter, ends_with("_g"))
-
-# turn to long form: one row per country
-gdp_long <- gdp_growth_q |>
-  pivot_longer(
-    cols      = ends_with("_g"),
-    names_to  = "country",
-    names_pattern = "(.+)_g",
-    values_to = "gdp_g"
-  )
-
-# 2) Quarterly inflation
-infl_q <- inflation_long |>
-  mutate(quarter = as.yearqtr(date)) |>
-  group_by(quarter, country) |>
-  slice_tail(n = 1) |>
-  ungroup()
-
-# turn to long form
-infl_long <- infl_q |>
-  select(quarter, country, inflation) |>
-  rename(infl_i = inflation)
-
-# 3) Merge signals into one long table
-signals_long <- full_join(gdp_long, infl_long, by = c("quarter","country"))
-
-# 4) Compute monthly ETF returns & tag quarter
-etf_ret <- etf_prices_wide |>
-  arrange(date) |>
-  mutate(across(-date, ~ ROC(.x, type = "discrete"))) |>
-  drop_na() |>
-  mutate(quarter = as.yearqtr(date))
-
-# 5) Calendar strategy: equal‐weight
-port_cal <- etf_ret |>
-  rowwise() |>
-  mutate(port = mean(c_across(all_of(regions)))) |>
-  ungroup() |>
-  select(date, port)
-
-# 6) Tactical weights in long form
-tac_long <- signals_long |>
-  group_by(quarter) |>
-  mutate(
-    down = (gdp_g < 0) | (infl_i > 4),
-    down = replace_na(down, FALSE),
-    base = 1 / n(),
-    w0   = if_else(down, base * 0.5, NA_real_)
-  ) |>
-  ungroup() |>
-  group_by(quarter) |>
-  mutate(
-    freed = sum(base - w0, na.rm = TRUE),
-    up    = !down,
-    w     = if_else(is.na(w0), freed / sum(up), w0)
-  ) |>
-  ungroup() |>
-  select(quarter, country, w)
-
-# 7) Pivot tactical weights back to wide (one column per country)
-quarterly_wts <- tac_long |>
-  pivot_wider(
-    names_from  = country,
-    values_from = w,
-    names_prefix = "",
-    values_fill = 0
-  ) |>
-  rename_with(~ paste0(.x, "_wt"), all_of(regions))
-
-# 8) Tactical strategy: apply those weights each month
-port_tac <- etf_ret |>
-  left_join(quarterly_wts, by = "quarter") |>
-  rowwise() |>
-  mutate(
-    port = sum(
-      c_across(all_of(regions)) *
-      c_across(all_of(paste0(regions, "_wt")))
-    )
-  ) |>
-  ungroup() |>
-  select(date, port)
-
-# 9) Compare & plot cumulative returns
-compare <- bind_rows(
-  Calendar = port_cal,
-  Tactical = port_tac,
-  .id = "strategy"
-)
-
-compare |>
-  group_by(strategy) |>
-  arrange(date) |>
-  mutate(cum = cumprod(1 + port) - 1) |>
-  ggplot(aes(date, cum, color = strategy)) +
-    geom_line(linewidth = 1) +
-    labs(
-      title = "Calendar vs. GDP/Inflation Tactical Rebalancing",
-      x = NULL, y = "Cumulative Return",
-      color = NULL
-    ) +
-    theme_minimal()
-
-# 10) Annualized performance table
-wide_ret <- compare |> pivot_wider(names_from = strategy, values_from = port) |> select(-date)
-ret_xts  <- xts(wide_ret, order.by = compare$date[compare$strategy == "Calendar"])
-PerformanceAnalytics::table.AnnualizedReturns(ret_xts, Rf = 0)
-
-
-```
 
 # STRATEGY 
 ## 
 ```{r}
-# Build GDP per capita table
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(zoo)
+
+# 4) Build GDP per capita table (added Mexico & South Korea)
 series_ids <- c(
-  USA     = "A939RC0Q052SBEA",
-  China   = "PCAGDPCNA646NWDB",
-  Germany = "PCAGDPDEA646NWDB",
-  India   = "PCAGDPINA646NWDB",
-  Japan   = "PCAGDPJPA646NWDB",
-  UK      = "PCAGDPGBA646NWDB",
-  France  = "PCAGDPFRA646NWDB",
-  Italy   = "PCAGDPITA646NWDB"
+  USA          = "A939RC0Q052SBEA",
+  China        = "PCAGDPCNA646NWDB",
+  Germany      = "PCAGDPDEA646NWDB",
+  India        = "PCAGDPINA646NWDB",
+  Japan        = "PCAGDPJPA646NWDB",
+  UK           = "PCAGDPGBA646NWDB",
+  France       = "PCAGDPFRA646NWDB",
+  Italy        = "PCAGDPITA646NWDB",
+  Mexico       = "PCAGDPMXA646NWDB",
+  `South Korea`= "PCAGDPKRA646NWDB"
 )
-gdp_pc_long <- imap_dfr(series_ids, function(id, country) {
-  get_fred(id) %>%
-    rename(gdp_pc = value) %>%
-    mutate(country = country)
-}) %>%
+
+gdp_pc_long <- series_ids |>
+  imap_dfr(function(id, country) {
+    get_fred(id) |>
+      rename(gdp_pc = value) |>
+      mutate(country = country)
+  }) |>
   filter(date >= as.Date("1960-01-01"))
 
-# 5) Build inflation long table
+# 5) Build inflation long table (added Mexico & South Korea)
 inflation_ids <- c(
-  USA     = "FPCPITOTLZGUSA",
-  China   = "FPCPITOTLZGCHN",
-  Germany = "FPCPITOTLZGDEU",
-  India   = "FPCPITOTLZGIND",
-  Japan   = "FPCPITOTLZGJPN",
-  UK      = "FPCPITOTLZGGBR",
-  France  = "FPCPITOTLZGFRA",
-  Italy   = "FPCPITOTLZGITA"
+  USA           = "FPCPITOTLZGUSA",
+  China         = "FPCPITOTLZGCHN",
+  Germany       = "FPCPITOTLZGDEU",
+  India         = "FPCPITOTLZGIND",
+  Japan         = "FPCPITOTLZGJPN",
+  UK            = "FPCPITOTLZGGBR",
+  France        = "FPCPITOTLZGFRA",
+  Italy         = "FPCPITOTLZGITA",
+  Mexico        = "FPCPITOTLZGMEX",
+  `South Korea` = "FPCPITOTLZGKOR"
 )
-inflation_long <- imap_dfr(inflation_ids, function(id, country) {
-  get_fred(id) %>%
-    rename(inflation = value) %>%
-    mutate(country = country)
-})
+
+inflation_long <- inflation_ids |>
+  imap_dfr(function(id, country) {
+    get_fred(id) |>
+      rename(inflation = value) |>
+      mutate(country = country)
+  })
 
 # 6) Fetch VEA & VWO monthly returns
-vea_ret <- GET_AV("VEA") %>%
-  mutate(ret_dev = adjusted_close / lag(adjusted_close) - 1) %>%
-  select(date, ret_dev) %>%
+vea_ret <- GET_AV("VEA") |>
+  arrange(date) |>
+  mutate(ret_dev = adjusted_close / lag(adjusted_close) - 1) |>
+  select(date, ret_dev) |>
   drop_na()
 
-vwo_ret <- GET_AV("VWO") %>%
-  mutate(ret_emg = adjusted_close / lag(adjusted_close) - 1) %>%
-  select(date, ret_emg) %>%
+vwo_ret <- GET_AV("VWO") |>
+  arrange(date) |>
+  mutate(ret_emg = adjusted_close / lag(adjusted_close) - 1) |>
+  select(date, ret_emg) |>
   drop_na()
 
 # 7) Compute quarterly EM & DM macro signals
 dev_countries <- c("USA","Japan","UK","France","Germany")
-emg_countries <- c("China","India")
+emg_countries <- c("China","India","Mexico","South Korea")
 
-gdp_growth_country <- gdp_pc_long %>%
-  arrange(country, date) %>%
-  group_by(country) %>%
+gdp_growth_country <- gdp_pc_long |>
+  arrange(country, date) |>
+  group_by(country) |>
   mutate(
     gdp_growth = (gdp_pc / lag(gdp_pc, 4) - 1) * 100,
     quarter    = as.yearqtr(date)
-  ) %>%
-  filter(!is.na(gdp_growth)) %>%
+  ) |>
+  filter(!is.na(gdp_growth)) |>
   ungroup()
 
-gdp_emg_q <- gdp_growth_country %>%
-  filter(country %in% emg_countries) %>%
-  group_by(quarter) %>%
+gdp_emg_q <- gdp_growth_country |>
+  filter(country %in% emg_countries) |>
+  group_by(quarter) |>
   summarize(gdp_emg = mean(gdp_growth, na.rm=TRUE), .groups="drop")
 
-gdp_dev_q <- gdp_growth_country %>%
-  filter(country %in% dev_countries) %>%
-  group_by(quarter) %>%
+gdp_dev_q <- gdp_growth_country |>
+  filter(country %in% dev_countries) |>
+  group_by(quarter) |>
   summarize(gdp_dev = mean(gdp_growth, na.rm=TRUE), .groups="drop")
 
-infl_long_q <- inflation_long %>%
+infl_long_q <- inflation_long |>
   mutate(quarter = as.yearqtr(date))
 
-infl_emg_q <- infl_long_q %>%
-  filter(country %in% emg_countries) %>%
-  group_by(quarter) %>%
-  slice_tail(n=1) %>%
+infl_emg_q <- infl_long_q |>
+  filter(country %in% emg_countries) |>
+  group_by(quarter) |>
+  slice_tail(n = 1) |>
   summarize(infl_emg = mean(inflation, na.rm=TRUE), .groups="drop")
 
-infl_dev_q <- infl_long_q %>%
-  filter(country %in% dev_countries) %>%
-  group_by(quarter) %>%
-  slice_tail(n=1) %>%
+infl_dev_q <- infl_long_q |>
+  filter(country %in% dev_countries) |>
+  group_by(quarter) |>
+  slice_tail(n = 1) |>
   summarize(infl_dev = mean(inflation, na.rm=TRUE), .groups="drop")
 
-signals <- gdp_emg_q %>%
-  left_join(infl_emg_q, by="quarter") %>%
-  left_join(gdp_dev_q,   by="quarter") %>%
+signals <- gdp_emg_q |>
+  left_join(infl_emg_q, by="quarter") |>
+  left_join(gdp_dev_q,   by="quarter") |>
   left_join(infl_dev_q,  by="quarter")
 
 # 8) Build monthly table with signals
-sig_monthly <- vea_ret %>%
-  left_join(vwo_ret, by="date") %>%
-  mutate(quarter = as.yearqtr(date)) %>%
-  left_join(signals, by="quarter") %>%
+sig_monthly <- vea_ret |>
+  left_join(vwo_ret, by="date") |>
+  mutate(quarter = as.yearqtr(date)) |>
+  left_join(signals, by="quarter") |>
   drop_na(gdp_emg, infl_emg, gdp_dev, infl_dev)
 
 # 9) Calendar vs. Tactical strategies, starting at 75/25
-
 infl_thr <- 4
 
-# — Calendar always 75% VEA / 25% VWO
-baseline <- sig_monthly %>%
+baseline <- sig_monthly |>
   mutate(
     wt_vea    = 0.75,
     wt_vwo    = 0.25,
     strat_ret = wt_vea * ret_dev + wt_vwo * ret_emg
   )
 
-# — Tactical starts 75/25, then tilts away from any “down” region
-tactical <- sig_monthly %>%
+tactical <- sig_monthly |>
   mutate(
-    # signals
     emg_down = (gdp_emg < 0) | (infl_emg > infl_thr),
     dev_down = (gdp_dev < 0) | (infl_dev > infl_thr),
     emg_down = replace_na(emg_down, FALSE),
     dev_down = replace_na(dev_down, FALSE),
 
-    # start at 25% VWO, 75% VEA
     wt_vwo = 0.25,
-    wt_vea = 1 - wt_vwo,
+    wt_vea = 0.75,
 
-    # if Emerging is down → cut VWO in half (12.5%), give rest to VEA
     wt_vwo = if_else(emg_down, wt_vwo * 0.5, wt_vwo),
     wt_vea = 1 - wt_vwo,
 
-    # if Developed is down → cut VEA in half (37.5%), give rest to VWO
     wt_vea = if_else(dev_down, wt_vea * 0.5, wt_vea),
     wt_vwo = 1 - wt_vea,
 
-    # portfolio return
     strat_ret = wt_vea * ret_dev + wt_vwo * ret_emg
   )
 
-# 10) Combine, plot & metrics (unchanged)
+# 10) Combine, plot & metrics
 df <- bind_rows(
-  Calendar75_25 = baseline  %>% select(date, strat_ret),
-  Tactical      = tactical %>% select(date, strat_ret),
+  Calendar75_25 = baseline  |> select(date, strat_ret),
+  Tactical      = tactical |> select(date, strat_ret),
   .id = "strategy"
 )
 
-df %>%
-  group_by(strategy) %>%
-  arrange(date) %>%
-  mutate(cum = cumprod(1 + strat_ret) - 1) %>%
+df |>
+  group_by(strategy) |>
+  arrange(date) |>
+  mutate(cum = cumprod(1 + strat_ret) - 1) |>
   ggplot(aes(date, cum, color = strategy)) +
     geom_line(size = 1) +
     labs(
-      title = "VEA/VWO: Calendar 75/25 vs. Tactical Tilt (EM & Dev Signals)",
-      x     = NULL, y = "Cumulative Return"
+      title = "VEA/VWO: 75/25 Constant Split vs.GDP/Inflation Corrections",
+      x     = NULL,
+      y     = "Cumulative Return"
     ) +
     theme_minimal()
 
-metrics <- df %>%
-  group_by(strategy) %>%
+metrics <- df |>
+  group_by(strategy) |>
   summarize(
     n_months = n(),
     cum_ret  = prod(1 + strat_ret) - 1,
@@ -596,7 +485,7 @@ metrics <- df %>%
     ann_vol  = sd(strat_ret, na.rm=TRUE) * sqrt(12),
     sharpe   = ann_ret / ann_vol,
     .groups  = "drop"
-  ) %>%
+  ) |>
   select(strategy, ann_ret, ann_vol, sharpe)
 
 print(metrics)
@@ -604,8 +493,121 @@ print(metrics)
 ```
 
 
-
+#QUESTION 3
 ```{r}
+library(dplyr)
+library(zoo)
+library(ggplot2)
+
+# 1) Define your tickers
+equity_tickers <- c(
+  Japan        = "EWJ",
+  UK           = "EWU",
+  Canada       = "EWC",
+  France       = "EWQ",
+  China        = "FXI",
+  India        = "INDA",
+  `South Korea`= "EWY",
+  Mexico       = "EWW"
+)
+resource_tickers <- c(
+  Japan        = "REMX",
+  `United Kingdom` = "OIH",
+  Canada       = "XEG.TO",
+  France       = "LRMR.PA",
+  China        = "CHIM",
+  India        = "IMAT",
+  `South Korea`= "KRMA",
+  Mexico       = "MXI"
+)
+
+# 2) Fetch & compute returns for all series
+fetch_ret <- function(sym, name) {
+  GET_AV(sym) %>%
+    arrange(date) %>%
+    mutate(!!name := adjusted_close / lag(adjusted_close) - 1) %>%
+    select(date, all_of(name)) %>%
+    drop_na()
+}
+
+equity_rets <- imap_dfr(equity_tickers, function(sym, country) {
+  fetch_ret(sym, "ret_eq") %>% mutate(country = country)
+})
+
+res_rets <- imap_dfr(resource_tickers, function(sym, country) {
+  fetch_ret(sym, "ret_res") %>% mutate(country = country)
+})
+
+# 3) Merge equity vs. resource returns
+paired <- inner_join(equity_rets, res_rets, by = c("date","country"))
+
+# 4) Compute cumulative & drawdowns (separately, no coalesce)
+paired2 <- paired %>%
+  group_by(country) %>%
+  arrange(date) %>%
+  mutate(
+    cum_eq  = cumprod(1 + ret_eq)  - 1,
+    cum_res = cumprod(1 + ret_res) - 1,
+    dd_eq   = cum_eq  - cummax(cum_eq),
+    dd_res  = cum_res - cummax(cum_res)
+  ) %>%
+  pivot_longer(
+    cols          = c(cum_eq, cum_res, dd_eq, dd_res),
+    names_to      = c("metric","type"),
+    names_pattern = "(cum|dd)_(eq|res)",
+    values_to     = "value"
+  ) %>%
+  ungroup()
+# 5) Plot cumulative returns by country, only if there’s data
+cum_data <- filter(paired2, metric == "cum")
+if (nrow(cum_data) > 0) {
+  ggplot(cum_data, aes(date, value, color = type)) +
+    geom_line() +
+    facet_wrap(~country) +
+    labs(
+      title = "Cumulative Returns: Equity vs. Resource",
+      y     = "Cumulative Return",
+      x     = NULL,
+      color = "Series"
+    ) +
+    theme_minimal()
+} else {
+  message("No cumulative-return data available to plot.")
+}
+
+# 6) Plot drawdowns by country, only if there’s data
+dd_data <- filter(paired2, metric == "dd")
+if (nrow(dd_data) > 0) {
+  ggplot(dd_data, aes(date, value, color = type)) +
+    geom_line() +
+    facet_wrap(~country) +
+    labs(
+      title = "Drawdowns: Equity vs. Resource",
+      y     = "Drawdown",
+      x     = NULL,
+      color = "Series"
+    ) +
+    theme_minimal()
+} else {
+  message("No drawdown data available to plot.")
+}
+
+
+# 7) Annualized metrics
+metrics <- paired %>%
+  group_by(country) %>%
+  summarize(
+    n            = n(),
+    cum_ret_eq   = prod(1 + ret_eq) - 1,
+    ann_ret_eq   = (1 + cum_ret_eq)^(12 / n) - 1,
+    ann_vol_eq   = sd(ret_eq, na.rm = TRUE) * sqrt(12),
+    cum_ret_res  = prod(1 + ret_res) - 1,
+    ann_ret_res  = (1 + cum_ret_res)^(12 / n) - 1,
+    ann_vol_res  = sd(ret_res, na.rm = TRUE) * sqrt(12),
+    .groups      = "drop"
+  )
+
+print(metrics)
 
 
 ```
@@ -613,6 +615,118 @@ print(metrics)
 
 
 ```{r}
+library(dplyr)
+library(purrr)
+library(zoo)
+library(ggplot2)
+
+# 1) Define resource tickers by country
+resource_tickers <- c(
+  Japan         = "REMX",
+  `United Kingdom` = "OIH",
+  Canada        = "XEG.TO",
+  France        = "LRMR.PA",
+  China         = "CHIM",
+  India         = "IMAT",
+  `South Korea`= "KRMA",
+  Mexico        = "MXI"
+)
+
+# 2) Map each country to Developed vs. Emerging
+group_map <- c(
+  Japan           = "Developed",
+  `United Kingdom`= "Developed",
+  Canada          = "Developed",
+  France          = "Developed",
+  China           = "Emerging",
+  India           = "Emerging",
+  `South Korea`   = "Emerging",
+  Mexico          = "Emerging"
+)
+
+# 3) Fetch resource returns
+fetch_ret <- function(sym, col) {
+  GET_AV(sym) %>%
+    arrange(date) %>%
+    mutate(!!col := adjusted_close / lag(adjusted_close) - 1) %>%
+    select(date, all_of(col)) %>%
+    drop_na()
+}
+
+res_rets <- imap_dfr(resource_tickers, function(sym, country) {
+  fetch_ret(sym, "ret_res") %>%
+    mutate(country = country,
+           bucket  = group_map[country])
+})
+
+# 4) Fetch VEA (developed) & VWO (emerging) returns
+vea_ret <- fetch_ret("VEA", "ret_bucket") %>% mutate(bucket = "Developed")
+vwo_ret <- fetch_ret("VWO", "ret_bucket") %>% mutate(bucket = "Emerging")
+
+bucket_rets <- bind_rows(vea_ret, vwo_ret)
+
+# 5) Join each resource series to its bucket ETF returns by date+bucket
+paired <- res_rets %>%
+  left_join(bucket_rets, by = c("date","bucket"))
+
+# 6) Compute cum returns & drawdowns
+paired2 <- paired %>%
+  group_by(country) %>%
+  arrange(date) %>%
+  mutate(
+    cum_res    = cumprod(1 + ret_res) - 1,
+    cum_bucket = cumprod(1 + ret_bucket) - 1,
+    dd_res     = cum_res    - cummax(cum_res),
+    dd_bucket  = cum_bucket - cummax(cum_bucket)
+  ) %>%
+  pivot_longer(
+    cols          = c(cum_res, cum_bucket, dd_res, dd_bucket),
+    names_to      = c("metric","series"),
+    names_pattern = "(cum|dd)_(res|bucket)",
+    values_to     = "value"
+  ) %>%
+  ungroup()
+
+# … after you compute paired2 …
+
+# restrict to non‐missing values
+paired2_clean <- paired2 %>%
+  filter(!is.na(value))
+# Prepare the two subsets
+cum_data <- filter(paired2_clean, metric == "cum")
+dd_data  <- filter(paired2_clean, metric == "dd")
+
+# 1) Cumulative returns plot
+if (nrow(cum_data) > 0) {
+  ggplot(cum_data, aes(x = date, y = value, color = series)) +
+    geom_line(na.rm = TRUE) +
+    facet_wrap(~country) +
+    labs(
+      title = "Cumulative Returns: Resource vs. VEA/VWO by Country",
+      y     = "Cumulative Return",
+      x     = NULL,
+      color = "Series"
+    ) +
+    theme_minimal()
+} else {
+  message("No cumulative‐return data available to plot.")
+}
+
+# 2) Drawdowns plot
+if (nrow(dd_data) > 0) {
+  ggplot(dd_data, aes(x = date, y = value, color = series)) +
+    geom_line(na.rm = TRUE) +
+    facet_wrap(~country) +
+    labs(
+      title = "Drawdowns: Resource vs. VEA/VWO by Country",
+      y     = "Drawdown",
+      x     = NULL,
+      color = "Series"
+    ) +
+    theme_minimal()
+} else {
+  message("No drawdown data available to plot.")
+}
 
 ```
 
@@ -645,34 +759,3 @@ print(metrics)
 
 ```
 
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-
-```{r}
-
-```
