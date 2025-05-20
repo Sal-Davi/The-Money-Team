@@ -13,8 +13,7 @@ format :
     toc-title: "On this page"
 ---
 
-
----
+------------------------------------------------------------------------
 
 ## Introduction: Rethinking U.S.-Only Portfolios in a Global Economy
 
@@ -24,79 +23,98 @@ In a globalized investment landscape, many individuals still rely heavily on U.S
 
 Investors face different needs based on their age, income, and financial objectives. A one-size-fits-all U.S.-only portfolio might not offer the best strategy for maximizing growth or managing risk. With access to global markets now easier than ever, we explore whether including international funds offers meaningful advantages—and under what conditions.
 
----
+------------------------------------------------------------------------
 
 ## Methodology and Analytical Focus
 
 We examined the role of developed and emerging market funds, commodity-linked ETFs, and rebalancing strategies based on macroeconomic indicators such as GDP per capita and inflation. Our individual questions included:
 
-- Can reallocating between developed and emerging markets protect against losses during downturns?  
-- Do equities from resource-rich countries improve portfolio stability or performance?
-- Are developed markets better than emerging ones for long-term growth, especially compared to U.S. funds?
+-   Can reallocating between developed and emerging markets protect against losses during downturns?
+-   Do equities from resource-rich countries improve portfolio stability or performance?
+-   Are developed markets better than emerging ones for long-term growth, especially compared to U.S. funds?
 
 We used historical data from 2011–2025 and constructed hypothetical portfolios using popular ETFs, including SPY, VEA, VWO, and others. Simulated performance and volatility metrics were compared under different strategies, including rebalancing based on economic signals.
 
----
+------------------------------------------------------------------------
 
 ## Data Sources and Limitations
 
-**Data Sources:**
-- **AlphaVantage:** U.S. and international equity ETFs, bond ETFs, and commodity ETFs.
-- **FRED:** Macroeconomic data including GDP per capita and inflation rates for selected countries.
+**Data Sources:** -
+
+**AlphaVantage:** U.S. and international equity ETFs, bond ETFs, and commodity ETFs.
+
+**FRED:** Macroeconomic data including GDP per capita and inflation rates for selected countries.
 
 **ETFs analyzed:**
 
-- **U.S.:** SPY (S&P 500), MDY (MidCap 400), IWM (Russell 2000)
-- **International Developed:** VEA
-- **International Emerging:** VWO
-- **Bond ETFs:** BND, SHY, TLT
-- **Commodities & Alternatives:** GLD (Gold), DBA (Agriculture), VNQ (REITs)
+-   **U.S.:** SPY (S&P 500), MDY (MidCap 400), IWM (Russell 2000)
+-   **International Developed:** VEA
+-   **International Emerging:** VWO
+-   **Bond ETFs:** BND, SHY, TLT
+-   **Commodities & Alternatives:** GLD (Gold), DBA (Agriculture), VNQ (REITs)
+
+**Economic Data:**\
+
+-   **Inflation:** (%, not seasonally adjusted)
+
+-   **GDP per capita:** (in U.S. Dollar, not seasonally adjusted, annual)
 
 **Limitations:**
 
-- ETF data only spans ~15 years, limiting long-term insights.
-- No fees, taxes, or bid-ask spreads were factored in.
-- Some countries were grouped simply by GDP/inflation metrics, without deeper macro modeling.
-- Resource-sector ETFs showed high volatility and varied availability across countries.
+-   ETF data only spans \~15 years, limiting long-term insights.
+-   No fees, taxes, or bid-ask spreads were factored in.
+-   Some countries were grouped simply by GDP/inflation metrics, without deeper macro modeling.
+-   Resource-sector ETFs showed high volatility and varied availability across countries.
 
----
+------------------------------------------------------------------------
 
 ## Key Visual Findings
 
 ### U.S. vs. International Equity Performance (2011–2025)
 
-insert image here 
+insert image here
 
 > **Insight:** U.S. markets (SPY) outperformed international developed (VEA) and emerging (VWO) markets over this period. However, diversification offered better downside protection during turbulent periods.
 
----
+------------------------------------------------------------------------
 
 ### Rebalancing Based on Economic Indicators
 
-insert image here 
+insert image here
 
-> **Insight:** A constant 75% VEA / 25% VWO allocation slightly underperformed rebalancing strategies based on GDP growth and inflation thresholds. While gains were modest (~0.004% p.a.), rebalancing avoided worse downturns during periods of emerging market underperformance.
+> **Insight:** A constant 75% VEA / 25% VWO allocation slightly underperformed rebalancing strategies based on GDP growth and inflation thresholds. While gains were modest (\~0.004% p.a.), rebalancing avoided worse downturns during periods of emerging market underperformance.
 
----
+------------------------------------------------------------------------
 
 ### Resource-Driven Markets vs. Broad Country ETFs
 
-insert image here 
+insert image here
 
-> **Insight:** South Korea's resource ETF (KRMA) outperformed its broad index, while China and Japan’s resource ETFs underperformed. Resource-focused investing may add value in specific contexts but increases volatility.
+> **Insight:**
+>
+> Investing in resource-driven ETFS does not provide drastic improvement to portfolio performance as compared to investing in broad-market ETFs.
+>
+> **Volatility and Metrics:**\
+> We measured cumulative return, annualized return, and annualized volatility for each ETF. Notably, resource-based ETFs tend to exhibit higher volatility, especially in Japan, Canada, and China—reflecting the cyclical and commodity-driven nature of these sectors.
+>
+> **Key Findings:**
+>
+> -   **South Korea’s resource ETF (KRMA)** stands out, with an annualized return of 12.4%, compared to just 2.4% for the country’s broad market ETF.
+>
+> -   In contrast, resource-focused ETFs in China and Japan produced flatter returns, trailing their broad market counterparts.
 
----
+------------------------------------------------------------------------
 
 ## Connection to Prior Work
 
 Our findings echo recent literature:
 
-- **Attig et al. (2023):** International diversification reduces political and inflation risk—consistent with our findings that global exposure (particularly in developed markets) stabilizes long-term performance.
-- **Moisand & Salmon:** Rebalancing improves outcomes, especially during bear markets. Our GDP/inflation-triggered rebalancing shows limited but positive impact.
-- **Ruano & Barros (2022):** Commodities offer a diversification benefit. We found gold and agriculture ETFs lowered volatility, though performance varied by period.
-- **Ouoba (2016):** Resource-rich countries can perform well, but political and fiscal instability pose serious risks—our analysis showed mixed results for resource-sector ETFs.
+-   **Attig et al. (2023):** International diversification reduces political and inflation risk—consistent with our findings that global exposure (particularly in developed markets) stabilizes long-term performance.
+-   **Moisand & Salmon:** Rebalancing improves outcomes, especially during bear markets. Our GDP/inflation-triggered rebalancing shows limited but positive impact.
+-   **Ruano & Barros (2022):** Commodities offer a diversification benefit. We found gold and agriculture ETFs lowered volatility, though performance varied by period.
+-   **Ouoba (2016):** Resource-rich countries can perform well, but political and fiscal instability pose serious risks—our analysis showed mixed results for resource-sector ETFs.
 
----
+------------------------------------------------------------------------
 
 ## Conclusion and Future Directions
 
@@ -104,28 +122,23 @@ Our findings echo recent literature:
 
 **Yes—but with caveats.** Developed international equities (VEA) provided more reliable returns than emerging markets (VWO), especially when rebalanced based on macro trends. However, neither matched U.S. equities in cumulative growth.
 
-Key takeaways:
-- A global mix can help with risk-adjusted returns, but U.S. equities still dominate long-term growth.
-- Limiting international equity exposure to ~20% appears optimal based on our results.
-- Bonds and commodity ETFs added the most stability to portfolios.
-- Rebalancing based on GDP/inflation shows potential but may require longer time horizons to fully realize benefits.
-- Resource-focused ETFs are too volatile to recommend broadly.
+Key takeaways: - A global mix can help with risk-adjusted returns, but U.S. equities still dominate long-term growth. - Limiting international equity exposure to \~20% appears optimal based on our results. - Bonds and commodity ETFs added the most stability to portfolios. - Rebalancing based on GDP/inflation shows potential but may require longer time horizons to fully realize benefits. - Resource-focused ETFs are too volatile to recommend broadly.
 
----
+------------------------------------------------------------------------
 
 ## Future Considerations
 
-- Expand the analysis to include more countries and weight by GDP size.
-- Explore currency and crypto assets for broader diversification.
-- Include tax implications and expense ratios for a more realistic performance picture.
-- Assess performance during multiple recession periods.
+-   Expand the analysis to include more countries and weight by GDP size.
+-   Explore currency and crypto assets for broader diversification.
+-   Include tax implications and expense ratios for a more realistic performance picture.
+-   Assess performance during multiple recession periods.
 
----
+------------------------------------------------------------------------
 
 ## Individual Report Links
 
-- 
+-   
 
----
+------------------------------------------------------------------------
 
-*Prepared for STA 9750 at Baruch College – May 2025. The Money Team: Giulio Orazzo - Salvatore Davi
+\*Prepared for STA 9750 at Baruch College – May 2025. The Money Team: Giulio Orazzo - Salvatore Davi
