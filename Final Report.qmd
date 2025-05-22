@@ -19,7 +19,7 @@ format :
 
 In a globalized investment landscape, many individuals still rely heavily on U.S.-based equity funds to build their portfolios. But does this domestic bias limit long-term performance? This project investigates an important question:
 
-**How can integrating a diverse mix of internationally traded funds—including those from developed and emerging markets—boost returns compared to relying solely on U.S. funds, all while aligning with individual financial goals and investment time frames?**
+**How can integrating a diverse mix of international traded funds, in developed or emerging markets boost returns compared to relying solely on U.S. funds, all while meeting individual financial objectives and investment time frames? **
 
 Investors face different needs based on their age, income, and financial objectives. A one-size-fits-all U.S.-only portfolio might not offer the best strategy for maximizing growth or managing risk. With access to global markets now easier than ever, we explore whether including international funds offers meaningful advantages—and under what conditions.
 
@@ -175,7 +175,7 @@ Where:\
 
 ### U.S. vs. International Equity Performance (2011–2025)
 
-![U.S. vs International Equity Performance](C:/Users/orazz/OneDrive - The City University of New York (1)/MASTER/STA9750-2025-SPRING/US_vs_international.png)
+![U.S. vs International Equity Performance](US_vs_international.png)
 
 > **Insight:** U.S. markets (SPY) outperformed international developed (VEA) and emerging (VWO) markets over this period. However, diversification offered better downside protection during turbulent periods.
 
