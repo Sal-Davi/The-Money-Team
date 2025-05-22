@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="The Money Team — Giulio Orazzo &amp; Salvatore Davi">
-<meta name="dcterms.date" content="2025-05-20">
+<meta name="dcterms.date" content="2025-05-22">
 
 <title>Global Diversification and Individual Investment Goals</title>
 <style>
@@ -36,6 +36,35 @@ ul.task-list li input[type="checkbox"] {
 <link href="Final Report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Final Report_files/libs/bootstrap/bootstrap-8a79a254b8e706d3c925cde0a310d4f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -50,6 +79,19 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#introduction-rethinking-u.s.-only-portfolios-in-a-global-economy" id="toc-introduction-rethinking-u.s.-only-portfolios-in-a-global-economy" class="nav-link active" data-scroll-target="#introduction-rethinking-u.s.-only-portfolios-in-a-global-economy">Introduction: Rethinking U.S.-Only Portfolios in a Global Economy</a></li>
   <li><a href="#methodology-and-analytical-focus" id="toc-methodology-and-analytical-focus" class="nav-link" data-scroll-target="#methodology-and-analytical-focus">Methodology and Analytical Focus</a></li>
   <li><a href="#data-sources-and-limitations" id="toc-data-sources-and-limitations" class="nav-link" data-scroll-target="#data-sources-and-limitations">Data Sources and Limitations</a></li>
+  <li><a href="#etf-breakdown-and-asset-overview" id="toc-etf-breakdown-and-asset-overview" class="nav-link" data-scroll-target="#etf-breakdown-and-asset-overview">ETF Breakdown and Asset Overview</a>
+  <ul class="collapse">
+  <li><a href="#stocks-equity-etfs" id="toc-stocks-equity-etfs" class="nav-link" data-scroll-target="#stocks-equity-etfs">Stocks (Equity ETFs)</a></li>
+  <li><a href="#bonds-fixed-income-etfs" id="toc-bonds-fixed-income-etfs" class="nav-link" data-scroll-target="#bonds-fixed-income-etfs">Bonds (Fixed Income ETFs)</a></li>
+  <li><a href="#commodities-alternatives" id="toc-commodities-alternatives" class="nav-link" data-scroll-target="#commodities-alternatives">Commodities &amp; Alternatives</a></li>
+  </ul></li>
+  <li><a href="#financial-metric-formulas" id="toc-financial-metric-formulas" class="nav-link" data-scroll-target="#financial-metric-formulas">📐 Financial Metric Formulas</a>
+  <ul class="collapse">
+  <li><a href="#total-return" id="toc-total-return" class="nav-link" data-scroll-target="#total-return">1. Total Return (%)</a></li>
+  <li><a href="#compound-annual-growth-rate-cagr" id="toc-compound-annual-growth-rate-cagr" class="nav-link" data-scroll-target="#compound-annual-growth-rate-cagr">2. Compound Annual Growth Rate (CAGR %)</a></li>
+  <li><a href="#annualized-volatility" id="toc-annualized-volatility" class="nav-link" data-scroll-target="#annualized-volatility">3. Annualized Volatility</a></li>
+  <li><a href="#sharpe-ratio" id="toc-sharpe-ratio" class="nav-link" data-scroll-target="#sharpe-ratio">4. Sharpe Ratio</a></li>
+  </ul></li>
   <li><a href="#key-visual-findings" id="toc-key-visual-findings" class="nav-link" data-scroll-target="#key-visual-findings">Key Visual Findings</a>
   <ul class="collapse">
   <li><a href="#u.s.-vs.-international-equity-performance-20112025" id="toc-u.s.-vs.-international-equity-performance-20112025" class="nav-link" data-scroll-target="#u.s.-vs.-international-equity-performance-20112025">U.S. vs.&nbsp;International Equity Performance (2011–2025)</a></li>
@@ -87,7 +129,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 20, 2025</p>
+      <p class="date">May 22, 2025</p>
     </div>
   </div>
   
@@ -120,23 +162,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="data-sources-and-limitations" class="level2">
 <h2 class="anchored" data-anchor-id="data-sources-and-limitations">Data Sources and Limitations</h2>
-<p><strong>Data Sources:</strong> -</p>
 <p><strong>AlphaVantage:</strong> U.S. and international equity ETFs, bond ETFs, and commodity ETFs.</p>
 <p><strong>FRED:</strong> Macroeconomic data including GDP per capita and inflation rates for selected countries.</p>
-<p><strong>ETFs analyzed:</strong></p>
-<ul>
-<li><strong>U.S.:</strong> SPY (S&amp;P 500), MDY (MidCap 400), IWM (Russell 2000)</li>
-<li><strong>International Developed:</strong> VEA</li>
-<li><strong>International Emerging:</strong> VWO</li>
-<li><strong>Bond ETFs:</strong> BND, SHY, TLT</li>
-<li><strong>Commodities &amp; Alternatives:</strong> GLD (Gold), DBA (Agriculture), VNQ (REITs)</li>
-</ul>
-<p><strong>Economic Data:</strong><br>
-</p>
-<ul>
-<li><p><strong>Inflation:</strong> (%, not seasonally adjusted)</p></li>
-<li><p><strong>GDP per capita:</strong> (in U.S. Dollar, not seasonally adjusted, annual)</p></li>
-</ul>
 <p><strong>Limitations:</strong></p>
 <ul>
 <li>ETF data only spans ~15 years, limiting long-term insights.</li>
@@ -144,13 +171,120 @@ ul.task-list li input[type="checkbox"] {
 <li>Some countries were grouped simply by GDP/inflation metrics, without deeper macro modeling.</li>
 <li>Resource-sector ETFs showed high volatility and varied availability across countries.</li>
 </ul>
+</section>
+<section id="etf-breakdown-and-asset-overview" class="level2">
+<h2 class="anchored" data-anchor-id="etf-breakdown-and-asset-overview">ETF Breakdown and Asset Overview</h2>
+<p>To evaluate global diversification strategies, we categorized our ETF selections into three major asset classes: <strong>stocks (equities)</strong>, <strong>bonds (fixed income)</strong>, and <strong>commodities/alternatives</strong>. Each fund offers distinct exposure, risk, and potential return profiles.</p>
 <hr>
+<section id="stocks-equity-etfs" class="level3">
+<h3 class="anchored" data-anchor-id="stocks-equity-etfs">Stocks (Equity ETFs)</h3>
+<p>These ETFs provide exposure to U.S. and international stock markets, spanning companies of various sizes and geographies.</p>
+<ul>
+<li><p><strong>SPY – S&amp;P 500 ETF (U.S.)</strong><br>
+Tracks the 500 largest U.S. companies; a benchmark for overall U.S. equity market performance.</p></li>
+<li><p><strong>MDY – S&amp;P MidCap 400 ETF (U.S.)</strong><br>
+Represents medium-sized U.S. companies, offering growth-oriented exposure.</p></li>
+<li><p><strong>IWM – Russell 2000 ETF (U.S.)</strong><br>
+Covers small-cap U.S. stocks, typically with higher risk and potential return.</p></li>
+<li><p><strong>VEA – Vanguard FTSE Developed Markets ETF</strong><br>
+Offers access to stocks in developed markets outside the U.S. and Canada (e.g., Europe, Japan, Australia).</p></li>
+<li><p><strong>VWO – Vanguard FTSE Emerging Markets ETF</strong><br>
+Focused on emerging economies like China, India, and Brazil, which may provide higher growth and higher volatility.</p></li>
+<li><p><strong>VXUS - Vanguard Total International Stock ETF</strong> Broad exposure to all international markets outside the U.S., including both developed and emerging markets.</p></li>
+</ul>
+<hr>
+</section>
+<section id="bonds-fixed-income-etfs" class="level3">
+<h3 class="anchored" data-anchor-id="bonds-fixed-income-etfs">Bonds (Fixed Income ETFs)</h3>
+<p>Bond ETFs contribute portfolio stability and income, and help reduce overall risk.</p>
+<ul>
+<li><p><strong>BND – Vanguard Total Bond Market ETF</strong><br>
+Provides broad exposure to U.S. investment-grade bonds including Treasuries, corporate bonds, and mortgage-backed securities.</p></li>
+<li><p><strong>SHY – 1–3 Year Treasury Bond ETF</strong><br>
+Invests in short-term U.S. Treasury bonds. Less sensitive to interest rates and lower risk.</p></li>
+<li><p><strong>TLT – 20+ Year Treasury Bond ETF</strong><br>
+Tracks long-term U.S. Treasury bonds. Higher duration and more volatility, often used for economic downturn protection.</p></li>
+</ul>
+<hr>
+</section>
+<section id="commodities-alternatives" class="level3">
+<h3 class="anchored" data-anchor-id="commodities-alternatives">Commodities &amp; Alternatives</h3>
+<p>These assets add diversification and serve as hedges against inflation and market volatility.</p>
+<ul>
+<li><p><strong>GLD – SPDR Gold Shares ETF</strong><br>
+Reflects the price of gold; commonly used as a safe haven during market stress or inflationary periods.</p></li>
+<li><p><strong>DBA – Invesco Agriculture ETF</strong><br>
+Tracks a basket of agricultural commodities like wheat, corn, and soybeans, providing real asset exposure.</p></li>
+<li><p><strong>VNQ – Vanguard Real Estate ETF (REITs)</strong><br>
+Invests in real estate investment trusts, offering access to income-producing properties in the U.S. real estate market.</p></li>
+</ul>
+<p><strong>Economic Data:</strong><br>
+</p>
+<ul>
+<li><p><strong>Inflation:</strong> (%, not seasonally adjusted)</p></li>
+<li><p><strong>GDP per capita:</strong> (in U.S. Dollar, not seasonally adjusted, annual)</p></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="financial-metric-formulas" class="level2">
+<h2 class="anchored" data-anchor-id="financial-metric-formulas">📐 Financial Metric Formulas</h2>
+<p>The financial formulas used in the project to calculate <strong>Risk and Returns</strong> or the assets are shown below.</p>
+<section id="total-return" class="level3">
+<h3 class="anchored" data-anchor-id="total-return">1. Total Return (%)</h3>
+<p><span class="math display">\[
+\text{Total Return (\%)} = \left( \frac{P_{\text{final}} - P_{\text{initial}}}{P_{\text{initial}}} \right) \times 100
+\]</span></p>
+<p><strong>Where:</strong></p>
+<ul>
+<li><span class="math inline">\(P_{final}\)</span> : Final price of the asset<br>
+</li>
+<li><span class="math inline">\(P_{initial}\)</span> : Initial price of the asset</li>
+</ul>
+</section>
+<section id="compound-annual-growth-rate-cagr" class="level3">
+<h3 class="anchored" data-anchor-id="compound-annual-growth-rate-cagr">2. Compound Annual Growth Rate (CAGR %)</h3>
+<p><span class="math display">\[
+\text{CAGR \%} = \left( \left( \frac{P_{\text{final}}}{P_{\text{initial}}} \right)^{\frac{1}{n}} - 1 \right) \times 100
+\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(n\)</span> : Number of years the asset is held</li>
+</ul>
+<hr>
+</section>
+<section id="annualized-volatility" class="level3">
+<h3 class="anchored" data-anchor-id="annualized-volatility">3. Annualized Volatility</h3>
+<p><span class="math display">\[
+\text{Volatility} = \sigma_{\text{monthly returns}} \times \sqrt{12}
+\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\sigma_{\text{monthly returns}}\)</span> : Standard deviation of monthly log returns</li>
+</ul>
+<hr>
+</section>
+<section id="sharpe-ratio" class="level3">
+<h3 class="anchored" data-anchor-id="sharpe-ratio">4. Sharpe Ratio</h3>
+<p><span class="math display">\[
+\text{Sharpe Ratio} = \frac{\text{CAGR} - r_f}{\text{Volatility}}
+\]</span></p>
+<p>Where:<br>
+- <span class="math inline">\({r_f}\)</span> : Risk-free rate (assumed to be 2% in this project)<br>
+- Volatility: Annualized standard deviation of returns</p>
+<hr>
+</section>
 </section>
 <section id="key-visual-findings" class="level2">
 <h2 class="anchored" data-anchor-id="key-visual-findings">Key Visual Findings</h2>
 <section id="u.s.-vs.-international-equity-performance-20112025" class="level3">
 <h3 class="anchored" data-anchor-id="u.s.-vs.-international-equity-performance-20112025">U.S. vs.&nbsp;International Equity Performance (2011–2025)</h3>
-<p>insert image here</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="C:/Users/orazz/OneDrive%20-%20The%20City%20University%20of%20New%20York%20(1)/MASTER/STA9750-2025-SPRING/US_vs_international.png" class="img-fluid figure-img"></p>
+<figcaption>U.S. vs International Equity Performance</figcaption>
+</figure>
+</div>
 <blockquote class="blockquote">
 <p><strong>Insight:</strong> U.S. markets (SPY) outperformed international developed (VEA) and emerging (VWO) markets over this period. However, diversification offered better downside protection during turbulent periods.</p>
 </blockquote>
